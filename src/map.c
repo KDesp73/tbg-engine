@@ -54,9 +54,9 @@ void node_free(tbge_node_h* node)
     }
 }
 
-tbge_map_h* map_init()
+tbge_map_t* map_init()
 {
-    tbge_map_h* map = (tbge_map_h*)malloc(sizeof(tbge_map_h));
+    tbge_map_t* map = (tbge_map_t*)malloc(sizeof(tbge_map_t));
     if (!map) {
         printf("Memory allocation failed\n");
         return NULL;
@@ -74,7 +74,7 @@ tbge_map_h* map_init()
     return map;
 }
 
-int map_add(tbge_map_h* map, tbge_node_h* node)
+int map_add(tbge_map_t* map, tbge_node_h* node)
 {
     if (!map || !node) return -1;
 
@@ -93,7 +93,7 @@ int map_add(tbge_map_h* map, tbge_node_h* node)
     return 0;
 }
 
-int map_remove(tbge_map_h* map, int id)
+int map_remove(tbge_map_t* map, int id)
 {
     if (!map) return -1;
 
@@ -110,20 +110,22 @@ int map_remove(tbge_map_h* map, int id)
         }
     }
 
-    printf("Node with ID %d not found\n", id);
+    fprintf(stderr, "Node with ID %d not found\n", id);
     return -1;
 }
 
-void map_free(tbge_map_h* map)
+void map_free(tbge_map_t** map)
 {
-    if (map) {
-        for (size_t i = 0; i < map->count; ++i) {
-            node_free(map->nodes[i]);
+    if (*map) {
+        for (size_t i = 0; i < (*map)->count; ++i) {
+            node_free((*map)->nodes[i]);
         }
 
-        free(map->nodes);
+        free((*map)->nodes);
+        (*map)->nodes = NULL;
 
-        free(map);
+        free((*map));
+        *map = NULL;
     }
 }
 

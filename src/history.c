@@ -9,8 +9,10 @@ void history_free(history_t** history)
 {
     for(size_t i = 0; i < (*history)->count; i++){
         free((*history)->commands[i]);
+        (*history)->commands[i] = NULL;
     }
     free(*history);
+    *history = NULL;
 }
 
 void history_setup_file()

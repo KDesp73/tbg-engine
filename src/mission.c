@@ -19,8 +19,10 @@ void objective_free(tbge_objective_t** objective)
     if(*objective == NULL) return;
     if((*objective)->desctiption != NULL){
         free((*objective)->desctiption);
+        (*objective)->desctiption = NULL;
     }
     free(*objective);
+    *objective = NULL;
 }
 
 tbge_objectives_t objectives_init(size_t capacity)
@@ -73,5 +75,6 @@ void objectives_free(tbge_objectives_t* list)
     }
 
     free(list->items);
+    list->items = NULL;
 }
 

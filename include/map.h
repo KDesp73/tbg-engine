@@ -27,11 +27,11 @@ typedef struct {
     tbge_node_h** nodes;
     size_t count;
     size_t capacity;
-} tbge_map_h;
+} tbge_map_t;
 
-tbge_map_h* map_init();
-int map_add(tbge_map_h* map, tbge_node_h* node);
-int map_remove(tbge_map_h* map, int id);
-void map_free(tbge_map_h* map);
+tbge_map_t* map_init();
+int map_add(tbge_map_t* map, tbge_node_h* node);
+int map_remove(tbge_map_t* map, int id);
+void map_free(tbge_map_t** map);
 
 #endif // MAP_H

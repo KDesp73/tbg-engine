@@ -6,7 +6,13 @@
 #include "ui.h"
 #include "item.h"
 
-int main(){
+int day()
+{
+    
+}
+
+int main()
+{
     delayed_typing("Hello World");
 
     char input[MAX_INPUT_LENGTH];
