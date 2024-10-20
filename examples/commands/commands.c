@@ -9,7 +9,7 @@
 
 int help_command(char** tokens, size_t count)
 {
-    printf("This is a help message\n");
+    default_help(GAME.commands);
     return 1;
 }
 
@@ -25,13 +25,19 @@ int history_command(char** tokens, size_t count)
     return 1;
 }
 
+int concat_command(char** tokens, size_t count)
+{
+    printf("%s%s\n", tokens[1], tokens[2]);
+    return 1;
+}
+
 int main(){
     GAME.commands = commands_init(10);
-    if(GAME.commands == NULL) return 1;
 
     commands_add(GAME.commands, command_init("help", 0, help_command));
     commands_add(GAME.commands, command_init("exit", 0, exit_command));
     commands_add(GAME.commands, command_init("history", 0, history_command));
+    commands_add(GAME.commands, command_init("concat", 2, concat_command));
     
     char input[MAX_INPUT_LENGTH];
     GAME.history = history_load();

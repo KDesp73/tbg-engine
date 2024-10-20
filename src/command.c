@@ -6,6 +6,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+int default_help(tbge_commands_t* commands)
+{
+    for(size_t i = 0; i < commands->count; i++){
+        tbge_command_t* c = commands->items[i];
+        printf("%s %zu\n", c->name, c->noa);
+    }
+    printf("\n");
+    return 1;
+}
+
 int command_run(tbge_commands_t* commands, const char* input)
 {
     if(commands == NULL) return -3;
@@ -20,6 +30,7 @@ int command_run(tbge_commands_t* commands, const char* input)
     for(size_t i = 0; i < commands->count; i++){
         if(STREQ(command, commands->items[i]->name)){
             if(count-1 != commands->items[i]->noa){
+                fprintf(stderr, "Command '%s' requires %zu arguments\n", command, commands->items[i]->noa);
                 return -2;
             }
             return commands->items[i]->run_func(tokens, count);

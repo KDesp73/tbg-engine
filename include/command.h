@@ -30,5 +30,6 @@ void commands_add(tbge_commands_t* commands, tbge_command_t* command);
 void commands_remove(tbge_commands_t* commands, const char* name);
 
 int command_run(tbge_commands_t* commands, const char* input);
+int default_help(tbge_commands_t* commands);
 
 #endif // COMMAND_H

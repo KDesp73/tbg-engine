@@ -54,3 +54,20 @@ ls
 help
 history
 exit
+ls
+clear
+help
+exit
+ls
+help
+clear
+concat
+concat "Hello " World
+concat Hello World
+concat Hello World
+clear
+exit
+help
+help
+history
+exit

@@ -65,13 +65,13 @@ void delete_character(char input[], int pos, int length) {
 void ui_prompt(tbge_history_t* history, const char* prompt, char input[]) 
 {
     clib_disable_input_buffering();
-    printf("\033[?25h");
+    PRNT("\033[?25h");
 
     int pos = 0;
     int len = 0;
     int history_index = history->count;
 
-    printf("%s", prompt);
+    PRNT("%s", prompt);
     fflush(stdout);
 
     char c;
@@ -138,15 +138,15 @@ void ui_prompt(tbge_history_t* history, const char* prompt, char input[])
         }
 
         // Clear the line and redraw the prompt and input
-        printf("\r\033[K%s%s", prompt, input);
-        printf("\033[%dG", (int)(visible_length(prompt) + pos + 1));        
-        printf("\033[?25h");
+        PRNT("\r\033[K%s%s", prompt, input);
+        PRNT("\033[%dG", (int)(visible_length(prompt) + pos + 1));        
+        PRNT("\033[?25h");
 
         fflush(stdout);
     } while (c != CLIB_KEY_ENTER);
 
     input[len] = '\0'; // Null-terminate the input
-    printf("\n"); // Move to the next line after input is finished
+    PRNT("\n"); // Move to the next line after input is finished
 
     clib_enable_input_buffering();
 }

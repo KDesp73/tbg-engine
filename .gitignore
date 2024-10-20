@@ -1,6 +1,7 @@
 build
 compile_commands.json
 .cache
-tbg-engine
+libtbge.a
+libtbge.so
 
 *.o
