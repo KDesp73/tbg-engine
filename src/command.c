@@ -1,7 +1,33 @@
 #include "command.h"
+#include "extern/clib.h"
+#include "game.h"
+#include "tokenizer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+int command_run(tbge_commands_t* commands, const char* input)
+{
+    if(commands == NULL) return -3;
+
+    size_t count;
+    char** tokens = tokenize(input, &count);
+
+    if(count == 0) return -1;
+
+    const char* command = tokens[0];
+
+    for(size_t i = 0; i < commands->count; i++){
+        if(STREQ(command, commands->items[i]->name)){
+            if(count-1 != commands->items[i]->noa){
+                return -2;
+            }
+            return commands->items[i]->run_func(tokens, count);
+        }
+    }
+    return 0;
+}
+
 
 tbge_command_t* command_init(const char* name, size_t noa, run_func_t run_func)
 {

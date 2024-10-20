@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Iinclude
+CFLAGS = -Wall -Iinclude -fPIC
 LDFLAGS =
 
 # Directories
@@ -11,7 +11,9 @@ DIST_DIR = dist
 
 # Target and version info
 TARGET = tbg-engine
-VERSIO = 0.1.0
+SHARED = libtbge.so
+STATIC = libtbge.a
+VERSION = 0.1.0
 
 # Determine the build type
 ifneq ($(type), RELEASE)
@@ -35,16 +37,26 @@ counter = 0
 
 # Targets
 
-## Build the project
 .PHONY: all
 all: check_tools $(BUILD_DIR) $(TARGET) ## Build the project
 	@echo "Build complete."
+
+.PHONY: shared
+shared: $(BUILD_DIR) $(OBJ_FILES) ## Build the dynamic library
+	$(CC) -shared -o $(SHARED) $(OBJ_FILES) $(LDFLAGS)
+	chmod 755 $(SHARED)
+
+.PHONY: static
+static: $(BUILD_DIR) $(OBJ_FILES) ## Build the static library
+	ar rcs $(STATIC) $(OBJ_FILES)
+	chmod 644 $(STATIC)
 
 ## Check required tools (like bear for compile_commands.json generation)
 .PHONY: check_tools
 check_tools: ## Check if necessary tools are available
 	@command -v gcc >/dev/null 2>&1 || { echo >&2 "[ERRO] gcc is not installed."; exit 1; }
 	@command -v bear >/dev/null 2>&1 || { echo >&2 "[WARN] bear is not installed. Skipping compile_commands.json target."; }
+	@command -v ar >/dev/null 2>&1 || { echo >&2 "[WARN] ar is not installed. Consider adding it to your system to build the static library"; }
 
 ## Create the build directory
 $(BUILD_DIR): ## Create the build directory if it doesn't exist
