@@ -28,3 +28,12 @@ ldfksfl
 fskdlfks
 flsdklf
 exit
+ls
+hello world
+open door
+exit
+lsl
+hello world
+exit
+clear
+exit

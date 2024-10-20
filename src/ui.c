@@ -5,7 +5,6 @@
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
 #include "history.h"
-#include "globals.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -167,4 +166,7 @@ void delayed_typing(const char* text)
         usleep((min_speed + rand() % min_speed) * 1000);  // Sleep for random time
     }
     printf("\n");
+
+    // Add to screen
+    screen_printf("%s\n", text);
 }

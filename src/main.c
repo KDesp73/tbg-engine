@@ -1,17 +1,17 @@
+#include "tokenizer.h"
 #include <stdio.h>
 
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
 #include "history.h"
 #include "ui.h"
-#include "item.h"
 
 int day()
 {
     
 }
 
-int main()
+void ui()
 {
     delayed_typing("Hello World");
 
@@ -21,15 +21,23 @@ int main()
         ui_prompt(history, "> ", input);
         printf("%s\n", input);
         history_add(history, input);
+        size_t count;
+        char** tokens = tokenize(input, &count);
+        print_tokens(tokens, count);
 
         if(STREQ(input, "history")){
             char* h = history_to_string(history);
             printf("%s\n", h);
             free(h);
         }
-        if(STREQ(input, "exit")){return 0;}
+        if(STREQ(input, "exit")){ exit(0); }
     }
 
+    
+}
+
+int main()
+{
 
     return 0;
 }
