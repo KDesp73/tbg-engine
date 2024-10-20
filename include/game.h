@@ -4,10 +4,12 @@
 #include "history.h"
 #include "player.h"
 #include "map.h"
-typedef struct {
-    tbge_player_h* player;
-    history_t* history;
+
+
+static struct {
+    tbge_player_t* player;
+    tbge_history_t* history;
     tbge_map_t* map;
-} tbge_game_t;
+} GAME;
 
 #endif // GAME_H

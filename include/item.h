@@ -11,9 +11,9 @@ typedef struct {
     int id;
     char* name;
     char* description;
-} tbge_item_h;
+} tbge_item_t;
 
-tbge_item_h* item_init(int id, const char* name, const char* desctiption);
-void item_free(tbge_item_h** item);
+tbge_item_t* item_init(int id, const char* name, const char* desctiption);
+void item_free(tbge_item_t** item);
 
 #endif // ITEM_H

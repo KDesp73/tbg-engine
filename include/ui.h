@@ -8,7 +8,7 @@
 #define MAX_INPUT_LENGTH 1024
 
 
-void ui_prompt(history_t* history, const char* prompt, char input[]) ;
+void ui_prompt(tbge_history_t* history, const char* prompt, char input[]) ;
 void delayed_typing(const char* text);
 
 static char *screen = NULL;

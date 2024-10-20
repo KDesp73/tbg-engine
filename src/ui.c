@@ -62,7 +62,7 @@ void delete_character(char input[], int pos, int length) {
     input[length - 1] = '\0'; 
 }
 
-void ui_prompt(history_t* history, const char* prompt, char input[]) 
+void ui_prompt(tbge_history_t* history, const char* prompt, char input[]) 
 {
     clib_disable_input_buffering();
     printf("\033[?25h");

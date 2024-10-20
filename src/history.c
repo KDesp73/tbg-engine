@@ -5,7 +5,7 @@
 #include "globals.h"
 
 
-void history_free(history_t** history)
+void history_free(tbge_history_t** history)
 {
     for(size_t i = 0; i < (*history)->count; i++){
         free((*history)->commands[i]);
@@ -22,7 +22,7 @@ void history_setup_file()
     free(file);
 }
 
-char* history_to_string(const history_t* history)
+char* history_to_string(const tbge_history_t* history)
 {
     char* res = clib_str_buffer_init();
     for(size_t i = 0; i < history->count; i++){
@@ -31,7 +31,7 @@ char* history_to_string(const history_t* history)
     return res;
 }
 
-void history_add(history_t* history, const char* command) 
+void history_add(tbge_history_t* history, const char* command) 
 {
     // If history is full, remove the first element and shift everything left
     if (history->count >= HISTORY_CAPACITY) {
@@ -52,14 +52,14 @@ void history_add(history_t* history, const char* command)
     free(hstr);
 }
 
-void history_clear(history_t* history)
+void history_clear(tbge_history_t* history)
 {
     history->count = 0;
     history->commands = NULL;
     clib_file_delete(HISTORY_FILE);
 }
 
-history_t* history_load()
+tbge_history_t* history_load()
 {
     char* in = clib_file_read(HISTORY_FILE, "r");
 
@@ -69,7 +69,7 @@ history_t* history_load()
         return NULL;
     }
 
-    history_t* h = (history_t*) malloc(sizeof(history_t));
+    tbge_history_t* h = (tbge_history_t*) malloc(sizeof(tbge_history_t));
     if (!h) {
         fprintf(stderr, "Failed allocating memory for history");
         free(in);
@@ -114,9 +114,9 @@ history_t* history_load()
 }
 
 
-history_t* history_init()
+tbge_history_t* history_init()
 {
-    history_t* h = (history_t*) malloc(sizeof(history_t));
+    tbge_history_t* h = (tbge_history_t*) malloc(sizeof(tbge_history_t));
     if (!h) {
         fprintf(stderr, "Failed allocating memory for history");
         return NULL;
