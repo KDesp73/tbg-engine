@@ -7,11 +7,13 @@
 #include "map.h"
 
 
-static struct {
+typedef struct {
     tbge_player_t* player;
     tbge_map_t* map;
     tbge_history_t* history;
     tbge_commands_t* commands;
-} GAME;
+} tbge_game_t;
+
+static tbge_game_t GAME;
 
 #endif // GAME_H
