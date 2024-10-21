@@ -1,7 +1,12 @@
 build
+*.o
 compile_commands.json
 .cache
+
+# Libraries
 libtbge.a
 libtbge.so
 
-*.o
+# Example executables
+commands
+map
