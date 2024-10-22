@@ -1,9 +1,16 @@
+/**
+ * Commands example file
+ *
+ * @file examples/commands.c
+ * @author KDesp73
+ * @date 20/10/2024
+ */
+
 #include "command.h"
 #include <stdio.h>
+#include <stdlib.h>
 #define CLIB_IMPLEMENTATION
-#include "extern/clib.h"
 #include "history.h"
-#include "tokenizer.h"
 #include "ui.h"
 #include "game.h"
 
@@ -21,7 +28,10 @@ int exit_command(char** tokens, size_t count)
 
 int history_command(char** tokens, size_t count)
 {
-    printf("%s\n", history_to_string(GAME.history));
+    char* hts = history_to_string(GAME.history);
+    printf("%s\n", hts);
+    free(hts);
+
     return 1;
 }
 
@@ -31,7 +41,7 @@ int concat_command(char** tokens, size_t count)
     return 1;
 }
 
-int main(){
+main()
     GAME.commands = commands_init(10);
 
     commands_add(GAME.commands, command_init("help", 0, help_command));
@@ -52,6 +62,7 @@ int main(){
         }
     }
     
+
 
     return 0;
 }

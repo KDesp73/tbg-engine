@@ -23,7 +23,7 @@ tbge_node_h* node_init(
     int fcon,
     ...
 );
-void node_free(tbge_node_h* node);
+void node_free(tbge_node_h** node);
 int node_connected(tbge_node_h* node, int target_id);
 
 static int map_status_code;

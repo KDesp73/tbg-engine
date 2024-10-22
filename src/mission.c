@@ -1,4 +1,5 @@
 #include "mission.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,11 +19,9 @@ void objective_free(tbge_objective_t** objective)
 {
     if(*objective == NULL) return;
     if((*objective)->desctiption != NULL){
-        free((*objective)->desctiption);
-        (*objective)->desctiption = NULL;
+        SAFE_FREE((*objective)->desctiption);
     }
-    free(*objective);
-    *objective = NULL;
+    SAFE_FREE(*objective);
 }
 
 tbge_objectives_t objectives_init(size_t capacity)
@@ -74,7 +73,6 @@ void objectives_free(tbge_objectives_t* list)
         objective_free(&list->items[i]);
     }
 
-    free(list->items);
-    list->items = NULL;
+    SAFE_FREE(list->items);
 }
 

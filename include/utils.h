@@ -2,6 +2,23 @@
 #define UTILS_H
 #include <stdio.h>
 
+#define SAFE_FREE(x) \
+    do { \
+        if(x != NULL) { \
+            free(x); \
+            x = NULL; \
+        } \
+    } while(0) 
+
+#define SAFE_FREE_ITEMS(x, count) \
+    do { \
+        if(x != NULL) { \
+            for(size_t i = 0; i < count; ++i){ \
+                SAFE_FREE(x[i]); \
+            } \
+        } \
+    } while(0)
+
 
 int starts_with(const char* str, const char* prefix);
 void print_visible(const char *str);

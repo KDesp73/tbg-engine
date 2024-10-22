@@ -2,24 +2,17 @@
 #include "utils.h"
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
-#include "globals.h"
-
 
 void history_free(tbge_history_t** history)
 {
-    for(size_t i = 0; i < (*history)->count; i++){
-        free((*history)->commands[i]);
-        (*history)->commands[i] = NULL;
-    }
-    free(*history);
-    *history = NULL;
+    SAFE_FREE_ITEMS((*history)->commands, (*history)->count);
+    SAFE_FREE((*history)->commands);
+    SAFE_FREE(*history);
 }
 
 void history_setup_file()
 {
-    char* file = HISTORY_FILE;
-    create_file(file);
-    free(file);
+    create_file(HISTORY_FILE);
 }
 
 char* history_to_string(const tbge_history_t* history)

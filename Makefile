@@ -8,6 +8,7 @@ SRC_DIR = src
 INCLUDE_DIR = include
 BUILD_DIR = build
 DIST_DIR = dist
+EXAMPLES_BIN = examples/bin
 
 # Target and version info
 SHARED = libtbge.so
@@ -37,7 +38,7 @@ counter = 0
 # Targets
 
 .PHONY: all
-all: static shared ## Build all libraries
+all: static shared examples ## Build all libraries and examples
 	@echo "Build complete."
 
 .PHONY: shared
@@ -82,7 +83,7 @@ uninstall: ## Remove the libraries from /usr/lib/
 .PHONY: clean
 clean: ## Remove all build files and the executable
 	@echo "[INFO] Cleaning up build directory and executable."
-	rm -rf $(BUILD_DIR) $(SHARED) $(STATIC)
+	rm -rf $(BUILD_DIR) $(SHARED) $(STATIC) $(EXAMPLES_BIN)
 
 .PHONY: distclean
 distclean: clean ## Perform a full clean, including backup and temporary files
@@ -94,6 +95,13 @@ dist: $(SRC_FILES) ## Create a tarball of the project
 	@echo "[INFO] Creating a tarball for version $(VERSION)"
 	mkdir -p $(DIST_DIR)
 	tar -czvf $(DIST_DIR)/$(TARGET)-$(VERSION).tar.gz $(SRC_DIR) $(INCLUDE_DIR) Makefile README.md
+
+.PHONY: examples
+examples: static ## Build all examples into binaries
+	mkdir -p $(EXAMPLES_BIN)
+	cc examples/map/map.c -o $(EXAMPLES_BIN)/map -l:libtbge.a -L. -Iinclude -ggdb
+	cc examples/player/player.c -o $(EXAMPLES_BIN)/player -l:libtbge.a -L. -Iinclude -ggdb
+	cc examples/commands/commands.c -o $(EXAMPLES_BIN)/commands -l:libtbge.a -L. -Iinclude -ggdb
 
 compile_commands.json: $(SRC_FILES) ## Generate compile_commands.json
 	@echo "[INFO] Generating compile_commands.json"

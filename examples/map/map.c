@@ -1,3 +1,11 @@
+/**
+ * Map example file
+ *
+ * @file examples/map.c
+ * @author KDesp73
+ * @date 21/10/2024
+ */
+
 #include "map.h"
 #include "game.h"
 #include <stdio.h>
@@ -10,8 +18,7 @@ enum {
     NODE_BEDROOM,
 };
 
-int main()
-{
+main()
     GAME.map = map_init();
 
     map_add(GAME.map, node_init(NODE_LIVING_ROOM, "Living Room", "The central part of the house", NODE_UNLOCKED, 

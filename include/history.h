@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define HISTORY_CAPACITY 10000
-#define HISTORY_FILE strdup("history.txt")
+#define HISTORY_FILE "history.txt"
 typedef struct {
     char** commands;
     size_t count;

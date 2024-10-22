@@ -17,10 +17,9 @@ typedef struct {
     tbge_stats_t stats;
 } tbge_player_t;
 
-#define PLAYER(n) \
-    (tbge_player_t){ \
-        .name = n, \
-        .item_count = 0, \
-    }
+tbge_player_t* player_init(const char* name);
+void player_free(tbge_player_t** player);
+int player_pick_item(tbge_player_t* player, tbge_item_t item);
+int player_has_item(tbge_player_t* player, int item_id);
 
 #endif // PLAYER_H

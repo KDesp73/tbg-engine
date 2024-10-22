@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "utils.h"
 #include <string.h>
 
 void screen_printf(const char *format, ...)
@@ -38,8 +39,7 @@ const char* get_screen()
 
 void clear_screen()
 {
-    free(screen);
-    screen = NULL;
+    SAFE_FREE(screen);
     screen_len = 0;
     screen_capacity = 0;
 }

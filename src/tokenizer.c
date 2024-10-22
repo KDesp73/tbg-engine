@@ -1,20 +1,17 @@
 #include "tokenizer.h"
+#include "utils.h"
 #include <ctype.h>
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
 #include <stdlib.h>
 #include <string.h>
 
-void free_tokens(char** tokens, size_t count)
+void free_tokens(char*** tokens, size_t count)
 {
-    if (!tokens) return; // Protect against NULL pointer
+    if (!*tokens) return; // Protect against NULL pointer
 
-    for (size_t i = 0; i < count; i++) {
-        if (tokens[i]) {
-            free(tokens[i]);
-        }
-    }
-    free(tokens);
+    SAFE_FREE_ITEMS(*tokens, count);
+    SAFE_FREE(*tokens);
 }
 
 char** tokenize(const char* input, size_t *count) 
@@ -99,10 +96,10 @@ char** tokenize(const char* input, size_t *count)
             tokens[*count] = (char*)malloc(token_length + 1);
             if (!tokens[*count]) {
                 for (size_t j = 0; j < *count; j++) {
-                    free(tokens[j]); // Free previously allocated tokens
+                    SAFE_FREE(tokens[j]);
                 }
-                free(tokens);
-                free(in);
+                SAFE_FREE(tokens);
+                SAFE_FREE(in);
                 return NULL;
             }
 
@@ -113,6 +110,7 @@ char** tokenize(const char* input, size_t *count)
     }
 
     tokens[*count] = NULL; // Null-terminate the array
+    SAFE_FREE(in);
     return tokens;
 }
 

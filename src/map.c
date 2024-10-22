@@ -1,5 +1,6 @@
 #include "map.h"
 #include "logging.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,12 +55,12 @@ tbge_node_h* node_init(
     return node;
 }
 
-void node_free(tbge_node_h* node)
+void node_free(tbge_node_h** node)
 {
     if (node) {
-        free(node->name);
-        free(node->description);
-        free(node);
+        SAFE_FREE((*node)->name);
+        SAFE_FREE((*node)->description);
+        SAFE_FREE((*node));
     }
 }
 
@@ -113,7 +114,7 @@ int map_remove(tbge_map_t* map, int id)
 
     for (size_t i = 0; i < map->count; ++i) {
         if (map->nodes[i]->id == id) {
-            node_free(map->nodes[i]);
+            node_free(&map->nodes[i]);
 
             for (size_t j = i; j < map->count - 1; ++j) {
                 map->nodes[j] = map->nodes[j + 1];
@@ -133,14 +134,11 @@ void map_free(tbge_map_t** map)
 {
     if (*map) {
         for (size_t i = 0; i < (*map)->count; ++i) {
-            node_free((*map)->nodes[i]);
+            node_free(&(*map)->nodes[i]);
         }
 
-        free((*map)->nodes);
-        (*map)->nodes = NULL;
-
-        free((*map));
-        *map = NULL;
+        SAFE_FREE((*map)->nodes);
+        SAFE_FREE((*map));
     }
 }
 

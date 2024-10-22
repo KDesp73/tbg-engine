@@ -2,6 +2,7 @@
 #include "extern/clib.h"
 #include "game.h"
 #include "tokenizer.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +37,8 @@ int command_run(tbge_commands_t* commands, const char* input)
             return commands->items[i]->run_func(tokens, count);
         }
     }
+    free_tokens(&tokens, count);
+
     return 0;
 }
 
@@ -62,9 +65,8 @@ tbge_command_t* command_init(const char* name, size_t noa, run_func_t run_func)
 
 void command_free(tbge_command_t** command)
 {
-    free((*command)->name);
-    free(*command);
-    *command = NULL;
+    SAFE_FREE((*command)->name);
+    SAFE_FREE((*command));
 }
 
 tbge_commands_t* commands_init(size_t capacity)
@@ -79,6 +81,7 @@ tbge_commands_t* commands_init(size_t capacity)
     if (!commands->items) {
         perror("Failed to allocate memory for command items");
         free(commands);
+        commands = NULL;
         exit(EXIT_FAILURE);
     }
 
@@ -93,9 +96,8 @@ void commands_free(tbge_commands_t** commands)
         for (size_t i = 0; i < (*commands)->count; ++i) {
             command_free(&((*commands)->items[i]));
         }
-        free((*commands)->items);
-        free(*commands);
-        *commands = NULL;
+        SAFE_FREE((*commands)->items);
+        SAFE_FREE((*commands));
     }
 }
 

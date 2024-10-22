@@ -8,5 +8,6 @@ libtbge.a
 libtbge.so
 
 # Example executables
-commands
-map
+examples/bin/
+examples/bin/*
+
