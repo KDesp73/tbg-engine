@@ -11,3 +11,4 @@ libtbge.so
 examples/bin/
 examples/bin/*
 
+.changelog
