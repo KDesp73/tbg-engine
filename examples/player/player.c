@@ -10,9 +10,6 @@
 #include "player.h"
 #include "game.h"
 
-
-
-
 main()
     GAME.player = player_init("Kostas");
     

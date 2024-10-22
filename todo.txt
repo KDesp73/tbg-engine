@@ -1,9 +1,10 @@
 TODO: achievements
 TODO: serialization
 TODO: map visualizer
-DONE: missions
+TODO: progress
+TODO: player
+TODO: missions
 DONE: ui
-DONE: player
 DONE: items
 DONE: map
 DONE: game
