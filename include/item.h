@@ -9,13 +9,16 @@ typedef enum {
     ITEM_BED,
 } ItemType;
 
+#define ITEM_EQUIPPABLE 1
+#define ITEM_NOT_EQUIPPABLE 0
 typedef struct {
     int id;
     char* name;
     char* description;
+    int equippable;
 } tbge_item_t;
 
-tbge_item_t* item_init(int id, const char* name, const char* desctiption);
+tbge_item_t* item_init(int id, const char* name, const char* description, int equipable);
 void item_free(tbge_item_t** item);
 
 #define MAX_ITEMS 128
@@ -25,12 +28,15 @@ typedef struct {
 } tbge_items_t;
 
 tbge_items_t* items_init(tbge_item_t* first, ...);
+int items_remove(tbge_items_t* items, int id);
+void items_free(tbge_items_t** items);
 
-#define ITEM(i, n, d) \
+#define ITEM(i, n, d, e) \
     (tbge_item_t) { \
         .id = i, \
         .name = n, \
-        .description = d \
+        .description = d, \
+        .equipable = e, \
     }
 
 #endif // ITEM_H

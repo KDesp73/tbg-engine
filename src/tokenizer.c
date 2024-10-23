@@ -83,8 +83,8 @@ char** tokenize(const char* input, size_t *count)
                     for (size_t j = 0; j < *count; j++) {
                         free(tokens[j]); // Free previously allocated tokens
                     }
-                    free(tokens);
-                    free(in);
+                    SAFE_FREE(tokens);
+                    SAFE_FREE(in);
                     return NULL;
                 }
                 tokens = new_tokens;
@@ -110,7 +110,7 @@ char** tokenize(const char* input, size_t *count)
     }
 
     tokens[*count] = NULL; // Null-terminate the array
-    SAFE_FREE(in);
+    // SAFE_FREE(in);
     return tokens;
 }
 

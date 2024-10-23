@@ -2,13 +2,27 @@
 #include "item.h"
 #include "logging.h"
 #include "utils.h"
+#include "ui.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 
-int node_connected(tbge_node_h* node, int target_id)
+void node_show(const tbge_node_t* node)
+{
+    PRNT("Node: %s%s%s\n", ANSI_PURPLE, node->name, ANSI_RESET);
+    PRNT("%s%s%s\n", ANSI_ITALIC, node->description, ANSI_RESET);
+
+    PRNT("\n");
+
+    for(size_t i = 0; i < node->items->count; ++i) {
+        PRNT("%zu. %s\n", i+1, node->items->items[i]->name);
+    }
+    PRNT("\n");
+}
+
+int node_connected(tbge_node_t* node, int target_id)
 {
     for(size_t i = 0; i < node->accessible_node_count; ++i){
         if(node->accessible_nodes[i] == target_id) return 1;
@@ -16,7 +30,7 @@ int node_connected(tbge_node_h* node, int target_id)
     return 0;
 }
 
-tbge_node_h* node_init(
+tbge_node_t* node_init(
     int id,
     const char* name,
     const char* description,
@@ -26,7 +40,7 @@ tbge_node_h* node_init(
     ...
 )
 {
-    tbge_node_h* node = (tbge_node_h*)malloc(sizeof(tbge_node_h));
+    tbge_node_t* node = (tbge_node_t*)malloc(sizeof(tbge_node_t));
     if (!node) {
         return NULL;
     }
@@ -58,11 +72,12 @@ tbge_node_h* node_init(
     return node;
 }
 
-void node_free(tbge_node_h** node)
+void node_free(tbge_node_t** node)
 {
-    if (node) {
+    if (*node) {
         SAFE_FREE((*node)->name);
         SAFE_FREE((*node)->description);
+        items_free(&(*node)->items);
         SAFE_FREE((*node));
     }
 }
@@ -75,7 +90,7 @@ tbge_map_t* map_init()
         return NULL;
     }
 
-    map->nodes = (tbge_node_h**)malloc(INITIAL_MAP_CAPACITY * sizeof(tbge_node_h*));
+    map->nodes = (tbge_node_t**)malloc(INITIAL_MAP_CAPACITY * sizeof(tbge_node_t*));
     if (!map->nodes) {
         printf("Memory allocation failed\n");
         free(map);
@@ -88,13 +103,13 @@ tbge_map_t* map_init()
     return map;
 }
 
-int map_add(tbge_map_t* map, tbge_node_h* node)
+int map_add(tbge_map_t* map, tbge_node_t* node)
 {
     if (!map || !node) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_INTERNAL_ERROR);
 
     if (map->count >= map->capacity) {
         size_t new_capacity = map->capacity * 2;
-        tbge_node_h** new_nodes = (tbge_node_h**)realloc(map->nodes, new_capacity * sizeof(tbge_node_h*));
+        tbge_node_t** new_nodes = (tbge_node_t**)realloc(map->nodes, new_capacity * sizeof(tbge_node_t*));
         if (!new_nodes) {
             printf("Failed to reallocate memory for map nodes\n");
             EXIT_WITH_MAP_STATUS(map, MAP_STATUS_INTERNAL_ERROR);
@@ -143,7 +158,7 @@ void map_free(tbge_map_t** map)
     }
 }
 
-tbge_node_h* map_search_node(tbge_map_t* map, int node)
+tbge_node_t* map_search_node(tbge_map_t* map, int node)
 {
     for(size_t i = 0; i < map->count; ++i) {
         if(map->nodes[i]->id == node) return map->nodes[i];
@@ -155,9 +170,9 @@ int map_change_node(tbge_map_t* map, int target_node_id)
 {
     map->last_try = target_node_id;
 
-    tbge_node_h* current_node = map_search_node(map, map->current_node);
+    tbge_node_t* current_node = map_search_node(map, map->current_node);
     if(current_node == NULL) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_INTERNAL_ERROR);
-    tbge_node_h* target_node = map_search_node(map, target_node_id);
+    tbge_node_t* target_node = map_search_node(map, target_node_id);
     if(target_node == NULL) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
 
     if(current_node->locked) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_CURRENT_NODE_LOCKED);
@@ -183,9 +198,9 @@ int map_set_location(tbge_map_t* map, int target_node_id)
 
 void map_log(tbge_map_t* map)
 {
-    tbge_node_h* current = map_search_node(map, map->current_node);
+    tbge_node_t* current = map_search_node(map, map->current_node);
     if(!current) return;
-    tbge_node_h* target = map_search_node(map, map->last_try);
+    tbge_node_t* target = map_search_node(map, map->last_try);
     if(!target) return;
 
     switch (map->status) {
@@ -214,7 +229,7 @@ void map_log(tbge_map_t* map)
 
 int map_lock(tbge_map_t* map, int node_id)
 {
-    tbge_node_h* n = map_search_node(map, node_id);
+    tbge_node_t* n = map_search_node(map, node_id);
     if(!n) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
 
     n->locked = NODE_LOCKED;
@@ -223,7 +238,7 @@ int map_lock(tbge_map_t* map, int node_id)
 
 int map_unlock(tbge_map_t* map, int node_id)
 {
-    tbge_node_h* n = map_search_node(map, node_id);
+    tbge_node_t* n = map_search_node(map, node_id);
     if(!n) EXIT_WITH_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
 
     n->locked = NODE_UNLOCKED;
@@ -232,7 +247,7 @@ int map_unlock(tbge_map_t* map, int node_id)
 
 const char* map_current_node(tbge_map_t* map)
 {
-    tbge_node_h* n = map_search_node(map, map->current_node);
+    tbge_node_t* n = map_search_node(map, map->current_node);
     if(!n) {
         SET_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
         return NULL;

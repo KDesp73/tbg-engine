@@ -85,6 +85,8 @@ tbge_mission_t* mission_init(const char* name, const char* description, char* re
 
 void mission_free(tbge_mission_t** mission)
 {
+    if(*mission == NULL) return;
+
     SAFE_FREE((*mission)->name);
     SAFE_FREE((*mission)->description);
     SAFE_FREE((*mission)->resolution);

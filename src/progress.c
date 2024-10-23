@@ -45,6 +45,14 @@ void progress_save(tbge_progress_t* progress, int checkpoint)
     return;
 }
 
+void progress_free(tbge_progress_t** progress)
+{
+    if(*progress == NULL) return;
+
+    SAFE_FREE((*progress)->checkpoints);
+    SAFE_FREE(*progress);
+}
+
 tbge_progress_t* progress_init(int first, ...)
 {
     tbge_progress_t* result = (tbge_progress_t*) malloc(sizeof(tbge_progress_t));

@@ -65,6 +65,8 @@ tbge_command_t* command_init(const char* name, size_t noa, run_func_t run_func)
 
 void command_free(tbge_command_t** command)
 {
+    if(*command == NULL) return;
+
     SAFE_FREE((*command)->name);
     SAFE_FREE((*command));
 }

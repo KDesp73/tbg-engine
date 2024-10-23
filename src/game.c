@@ -4,6 +4,7 @@
 #include "map.h"
 #include "mission.h"
 #include "player.h"
+#include "progress.h"
 #include "ui.h"
 
 void game_free(tbge_game_t* game)
@@ -18,6 +19,8 @@ void game_free(tbge_game_t* game)
         history_free(&game->history);
     if(game->mission != NULL)
         mission_free(&game->mission);
+    if(game->progress != NULL)
+        progress_free(&game->progress);
 
     clear_screen();
 }

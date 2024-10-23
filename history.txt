@@ -119,3 +119,17 @@ exit
 exit
 exit
 exit
+ls
+help
+ls
+concat hello world
+exit
+exit
+concat hello world
+concat hello world
+concat hello world
+concat hello world
+exit
+concat hello world
+clear
+exit

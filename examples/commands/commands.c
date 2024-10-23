@@ -37,7 +37,7 @@ int history_command(char** tokens, size_t count)
 
 int concat_command(char** tokens, size_t count)
 {
-    printf("%s%s\n", tokens[1], tokens[2]);
+    printf("%s %s\n", tokens[1], tokens[2]);
     return 1;
 }
 
