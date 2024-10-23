@@ -24,6 +24,7 @@
     } while(0)
 
 
+int is_number(const char *str);
 int starts_with(const char* str, const char* prefix);
 void print_visible(const char *str);
 int is_empty(const char* str);

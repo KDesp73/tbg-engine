@@ -202,9 +202,6 @@ void map_log(tbge_map_t* map)
         MAP_LOG_ERR("No route found between %s - %s", current->name, target->name);
         break;
     case MAP_STATUS_OK:
-#ifdef DEBUG
-        MAP_LOG("OK");
-#endif // DEBUG
         break;
     default:
         MAP_LOG_ERR("Unknown Error: %d", map->status);

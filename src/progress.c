@@ -1,4 +1,5 @@
 #include "progress.h"
+#include "utils.h"
 #include <stdlib.h>
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
@@ -18,16 +19,17 @@ void progress_save(tbge_progress_t* progress, int checkpoint)
         return;
     }
 
+    if(!clib_file_exists(CHECKPOINT_FILE)){
+        clib_file_write(CHECKPOINT_FILE, "-1", "w");
+    }
+
     char* file_cp_s = clib_file_read(CHECKPOINT_FILE, "r");
-    if(file_cp_s == NULL) {
-        char* its = clib_str_format("%d", checkpoint);
-        clib_file_write(CHECKPOINT_FILE, its, "w");
-        free(its);
-        progress->status = 1;
+
+    if(file_cp_s == NULL || !is_number(file_cp_s)){
+        progress->status = -1;
         return;
     }
 
-    // TODO: check if file_cp_s is a number
     int file_cp = atoi(file_cp_s);
     free(file_cp_s);
 
