@@ -2,6 +2,10 @@
 #define UTILS_H
 #include <stdio.h>
 
+#define ARG_N(_1, _2, _3, _4, N, ...) N
+#define ARG_COUNT(...) \
+    ARG_N(__VA_ARGS__, 4, 3, 2, 1)
+
 #define SAFE_FREE(x) \
     do { \
         if(x != NULL) { \

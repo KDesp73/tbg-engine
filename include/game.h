@@ -23,18 +23,15 @@ void game_free(tbge_game_t* game);
 #define SETUP_CLEANUP() \
     atexit(cleanup)
     
-
 int tbge_main(int argc, char** argv);
+
 #define main(...)\
     DEFINE_CLEANUP \
     int main(__VA_ARGS__) { \
         SETUP_CLEANUP(); \
-        tbge_main(argc, argv); \
+        return tbge_main(argc, argv); \
     } \
     int tbge_main(__VA_ARGS__)
-
-
-
 
 
 static tbge_game_t GAME;

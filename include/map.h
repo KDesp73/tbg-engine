@@ -26,11 +26,10 @@ tbge_node_h* node_init(
 void node_free(tbge_node_h** node);
 int node_connected(tbge_node_h* node, int target_id);
 
-static int map_status_code;
-#define SET_MAP_STATUS(c) map_status_code = c
-#define EXIT_WITH_MAP_STATUS(c) \
+#define SET_MAP_STATUS(map, c) map->status = c;
+#define EXIT_WITH_MAP_STATUS(map, c) \
     do { \
-        SET_MAP_STATUS(c); \
+        SET_MAP_STATUS(map, c); \
         return c; \
     } while(0)
 
@@ -46,6 +45,7 @@ typedef enum {
 
 #define INITIAL_MAP_CAPACITY 16
 typedef struct {
+    int status;
     int current_node;
     int last_try;
     tbge_node_h** nodes;
