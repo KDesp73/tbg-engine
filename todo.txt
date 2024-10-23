@@ -5,7 +5,6 @@ TODO: player
 TODO: missions
 TODO: documentation
 TODO: ui
-TODO: make GAME a pointer
 TODO: change checkpoint saving method
 DONE: items
 DONE: map

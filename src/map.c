@@ -1,4 +1,5 @@
 #include "map.h"
+#include "item.h"
 #include "logging.h"
 #include "utils.h"
 
@@ -20,6 +21,7 @@ tbge_node_h* node_init(
     const char* name,
     const char* description,
     _Bool accessible,
+    tbge_items_t* items,
     int fcon,
     ...
 )
@@ -34,6 +36,7 @@ tbge_node_h* node_init(
     node->description = strdup(description);
     node->locked = accessible;
     node->accessible_node_count = 0;
+    node->items = items;
 
     va_list args;
     va_start(args, fcon);

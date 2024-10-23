@@ -1,5 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
+#include "item.h"
 #include <stddef.h>
 
 #define NODE_UNLOCKED 0
@@ -13,6 +14,7 @@ typedef struct {
     _Bool locked;
     int accessible_nodes[MAX_NODE_CONNECTIONS];
     size_t accessible_node_count;
+    tbge_items_t* items;
 } tbge_node_h;
 
 tbge_node_h* node_init(
@@ -20,6 +22,7 @@ tbge_node_h* node_init(
     const char* name,
     const char* description,
     _Bool accesible,
+    tbge_items_t* items,
     int fcon,
     ...
 );

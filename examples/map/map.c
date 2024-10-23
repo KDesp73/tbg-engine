@@ -21,24 +21,24 @@ enum {
 int main(int argc, char** argv) {
     GAME.map = map_init();
 
-    map_add(GAME.map, node_init(NODE_LIVING_ROOM, "Living Room", "The central part of the house", NODE_UNLOCKED, 
+    map_add(GAME.map, node_init(NODE_LIVING_ROOM, "Living Room", "The central part of the house", NODE_UNLOCKED, NULL,
                 NODE_KITCHEN,
                 NODE_BALCONY,
                 NODE_TOILET,
                 NODE_BEDROOM,
                 END_CONNECTIONS));
-    map_add(GAME.map, node_init(NODE_TOILET, "Toilet", "Toilet description", NODE_LOCKED, 
+    map_add(GAME.map, node_init(NODE_TOILET, "Toilet", "Toilet description", NODE_LOCKED, NULL,
                 NODE_LIVING_ROOM,
                 END_CONNECTIONS));
-    map_add(GAME.map, node_init(NODE_KITCHEN, "Kitchen", "Kitchen description", NODE_UNLOCKED, 
+    map_add(GAME.map, node_init(NODE_KITCHEN, "Kitchen", "Kitchen description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_BALCONY,
                 END_CONNECTIONS));
-    map_add(GAME.map, node_init(NODE_BALCONY, "Balcony", "Balcony description", NODE_UNLOCKED, 
+    map_add(GAME.map, node_init(NODE_BALCONY, "Balcony", "Balcony description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_KITCHEN,
                 END_CONNECTIONS));
-    map_add(GAME.map, node_init(NODE_BEDROOM, "Bedroom", "Bedroom description", NODE_UNLOCKED, 
+    map_add(GAME.map, node_init(NODE_BEDROOM, "Bedroom", "Bedroom description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_TOILET,
                 END_CONNECTIONS));
