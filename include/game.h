@@ -3,6 +3,7 @@
 
 #include "command.h"
 #include "history.h"
+#include "mission.h"
 #include "player.h"
 #include "map.h"
 #include "progress.h"
@@ -14,6 +15,7 @@ typedef struct {
     tbge_history_t* history;
     tbge_commands_t* commands;
     tbge_progress_t* progress;
+    tbge_mission_t* mission;
 } tbge_game_t;
 
 void game_free(tbge_game_t* game);

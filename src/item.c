@@ -37,6 +37,7 @@ tbge_items_t* items_init(tbge_item_t* first, ...)
         result->items[result->count++] = item;
         item = va_arg(args, tbge_item_t*);
     }
+    va_end(args);
 
     return result;
 }

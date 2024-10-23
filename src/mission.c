@@ -1,78 +1,97 @@
 #include "mission.h"
+#include "extern/clib.h"
+#include "ui.h"
 #include "utils.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
-
-tbge_objective_t* objective_init(const char* description)
+int mission_complete_objective(tbge_mission_t* mission, int id)
 {
-    if(description == NULL) return NULL;
+    int objective_found = 0, all_completed = 1;
+    for(size_t i = 0; i < mission->objective_count; ++i){
+        if(id == mission->objectives[i]->id && !mission->objectives[i]->completed) {
+            mission->objectives[i]->completed = 1;
+            objective_found = 1;
+        }
 
-    tbge_objective_t* result = malloc(sizeof(tbge_objective_t));
+        if(!mission->objectives[i]->completed) all_completed = 0;
+    }
+
+    if(all_completed) mission->completed = 1;
+
+    return objective_found;
+}
+
+void mission_show(const tbge_mission_t* mission)
+{
+    PRNT("Mission: %s%s%s\n", ANSI_PURPLE, mission->name, ANSI_RESET);
+    if(!mission->completed)
+        PRNT("%s%s%s\n", ANSI_ITALIC, mission->description, ANSI_RESET);
+    else
+        PRNT("%s%s%s\n", ANSI_ITALIC, mission->resolution, ANSI_RESET);
+
+    PRNT("\n");
+    for(size_t i = 0; i < mission->objective_count; ++i){
+        if(mission->objectives[i] == NULL) continue;
+
+        PRNT("%s%zu. %s%s\n", 
+            (mission->objectives[i]->completed) ? ANSI_GREEN : ANSI_RED,
+            i+1,
+            mission->objectives[i]->description,
+            ANSI_RESET
+        );
+    }
+    PRNT("\n");
+}
+
+tbge_mission_t* mission_init(const char* name, const char* description, char* resolution, tbge_objective_t* first, ...)
+{
+    tbge_mission_t* result = (tbge_mission_t*) malloc(sizeof(tbge_mission_t));
+    result->name = strdup(name);
+    result->description = strdup(description);
+    result->resolution = strdup(resolution);
     result->completed = 0;
-    result->desctiption = strdup(description);
+
+    if(first == NULL) return result;
+
+    va_list args;
+    va_start(args, first);
+    result->objective_count++;
+
+    tbge_objective_t* obj = va_arg(args, tbge_objective_t*);
+    while(obj != NULL){
+        result->objective_count++;
+        obj = va_arg(args, tbge_objective_t*);
+    }
+    va_end(args);
+
+    result->objectives = malloc(sizeof(tbge_objective_t) * result->objective_count);
+    result->objective_count = 0;
+
+    va_start(args, first);
+    result->objectives[result->objective_count++] = first;
+    
+    obj = va_arg(args, tbge_objective_t*);
+    while(obj != NULL){
+        result->objectives[result->objective_count++] = obj;
+        obj = va_arg(args, tbge_objective_t*);
+    }
+    va_end(args);
 
     return result;
 }
 
-void objective_free(tbge_objective_t** objective)
+void mission_free(tbge_mission_t** mission)
 {
-    if(*objective == NULL) return;
-    if((*objective)->desctiption != NULL){
-        SAFE_FREE((*objective)->desctiption);
+    SAFE_FREE((*mission)->name);
+    SAFE_FREE((*mission)->description);
+    SAFE_FREE((*mission)->resolution);
+
+    for(size_t i = 0; i < (*mission)->objective_count; ++i) {
+        objective_free(&(*mission)->objectives[i]);
     }
-    SAFE_FREE(*objective);
+    SAFE_FREE((*mission)->objectives);
+    SAFE_FREE(*mission);
 }
-
-tbge_objectives_t objectives_init(size_t capacity)
-{
-
-    tbge_objectives_t result = {0};
-    if (capacity <= 0) return result;
-
-    result.capacity = capacity;
-    result.count = 0;
-    result.items = malloc(sizeof(tbge_objective_t) * capacity);
-
-    return result;
-}
-
-int objectives_push(tbge_objectives_t* list, tbge_objective_t* objective)
-{
-    if(list == NULL) return 0;
-    if(objective == NULL) return 0;
-    if(list->capacity <= list->count) return 0;
-
-    list->items[list->count++] = objective;
-    return 1;
-}
-
-int objectives_pop(tbge_objectives_t* list, size_t index)
-{
-    // TODO: change 0s with explicit error ids
-    if(list == NULL) return 0;
-    if(list->count == 0) return 0;
-    if(index < 0 || index > list->count) return 0;
-    if(list->items[index] == NULL) return 0;
-
-    list->count--;
-
-    objective_free(&list->items[index]);
-
-    return 1;
-}
-
-void objectives_free(tbge_objectives_t* list)
-{
-    if(list == NULL) return;
-    if(list->items == NULL) return;
-
-    for(size_t i = 0; i < list->count; ++i) {
-        if(list->items[i] == NULL) continue;
-
-        objective_free(&list->items[i]);
-    }
-
-    SAFE_FREE(list->items);
-}
-

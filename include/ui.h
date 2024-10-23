@@ -24,7 +24,7 @@ const char* flush_screen();
     do { \
         screen_printf(fmt, ##__VA_ARGS__); \
         printf(fmt, ##__VA_ARGS__); \
-    } while(0);
+    } while(0)
 
 
 #endif // UI_H
