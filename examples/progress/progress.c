@@ -25,7 +25,7 @@ int yes_or_no(const char* message)
 }
 
 
-main()
+int main(int argc, char** argv) {
     GAME.progress = progress_init(
         CP_START,
         CP_MIDDLE,

@@ -41,7 +41,7 @@ int concat_command(char** tokens, size_t count)
     return 1;
 }
 
-main()
+int main(int argc, char** argv) {
     GAME.commands = commands_init(10);
 
     commands_add(GAME.commands, command_init("help", 0, help_command));

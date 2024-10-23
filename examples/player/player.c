@@ -10,7 +10,7 @@
 #include "player.h"
 #include "game.h"
 
-main()
+int main(int argc, char** argv) {
     GAME.player = player_init("Kostas");
     
 

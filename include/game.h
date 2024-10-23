@@ -19,14 +19,19 @@ typedef struct {
 void game_free(tbge_game_t* game);
 
 #define DEFINE_CLEANUP \
-    void cleanup() { game_free(&GAME); }
+    ____tgbe_test____ = 0;void cleanup() { game_free(&GAME); }
 #define SETUP_CLEANUP() \
     atexit(cleanup)
     
+
+int tbge_main(int argc, char** argv);
 #define main(...)\
     DEFINE_CLEANUP \
     int main(__VA_ARGS__) { \
-        SETUP_CLEANUP();
+        SETUP_CLEANUP(); \
+        tbge_main(argc, argv); \
+    } \
+    int tbge_main(__VA_ARGS__)
 
 
 

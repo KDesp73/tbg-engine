@@ -18,7 +18,7 @@ enum {
     NODE_BEDROOM,
 };
 
-main()
+int main(int argc, char** argv) {
     GAME.map = map_init();
 
     map_add(GAME.map, node_init(NODE_LIVING_ROOM, "Living Room", "The central part of the house", NODE_UNLOCKED, 
