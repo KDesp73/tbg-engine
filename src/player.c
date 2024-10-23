@@ -32,35 +32,38 @@ void player_free(tbge_player_t** player)
 
 int player_pick_item(tbge_player_t* player, tbge_item_t* item)
 {
-    if(player->item_count >= INVENTORY_CAPACITY) return -1;
+    if(player->item_count >= INVENTORY_CAPACITY) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_INTERNAL_ERROR);
+    if(!item->equippable) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_EQUIPPABLE);
 
     player->inventory[player->item_count++] = item;
 
-    return 0;
+    EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_OK);
 }
 
 int player_has_item(tbge_player_t* player, int item_id)
 {
     for(size_t i = 0; i < player->item_count; ++i){
-        if(player->inventory[i]->id == item_id) return 1;
+        if(player->inventory[i]->id == item_id) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_OK);
     }
-    return 0;
+    EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_FOUND);
 }
 
 int player_pick_item_id(tbge_player_t* player, int id, tbge_map_t* map)
 {
     tbge_node_t* node = map_search_node(map, map->current_node);
-    if(node == NULL) return -1;
+    if(node == NULL) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_INTERNAL_ERROR);
     
     for(size_t i = 0; i < node->items->count; ++i) {
         if(id == node->items->items[i]->id){
-            player_pick_item(player, node->items->items[i]); // TODO: pass a copy
+            if(!node->items->items[i]->equippable) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_EQUIPPABLE);
+
+            player_pick_item(player, node->items->items[i]);
             items_remove(node->items, id);
-            return 1;
+            EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_OK);
         }
     }
 
-    return 0;
+    EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_FOUND);
 }
 
 void player_show(const tbge_player_t* player)
@@ -73,3 +76,5 @@ void player_show(const tbge_player_t* player)
     }
     PRNT("\n");
 }
+
+// TODO: player_log (See map_log)
