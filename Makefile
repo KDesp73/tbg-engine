@@ -102,6 +102,7 @@ examples: static ## Build all examples into binaries
 	cc examples/map/map.c -o $(EXAMPLES_BIN)/map -l:libtbge.a -L. -Iinclude -ggdb
 	cc examples/player/player.c -o $(EXAMPLES_BIN)/player -l:libtbge.a -L. -Iinclude -ggdb
 	cc examples/commands/commands.c -o $(EXAMPLES_BIN)/commands -l:libtbge.a -L. -Iinclude -ggdb
+	cc examples/progress/progress.c -o $(EXAMPLES_BIN)/progress -l:libtbge.a -L. -Iinclude -ggdb
 
 compile_commands.json: $(SRC_FILES) ## Generate compile_commands.json
 	@echo "[INFO] Generating compile_commands.json"

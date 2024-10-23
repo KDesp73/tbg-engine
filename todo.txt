@@ -1,11 +1,14 @@
 TODO: achievements
 TODO: serialization
 TODO: map visualizer
-TODO: progress
 TODO: player
 TODO: missions
-DONE: ui
+TODO: documentation
+TODO: ui
+TODO: make GAME a pointer
+TODO: change checkpoint saving method
 DONE: items
 DONE: map
 DONE: game
 DONE: commands
+DONE: progress

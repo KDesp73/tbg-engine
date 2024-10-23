@@ -5,6 +5,7 @@
 #include "history.h"
 #include "player.h"
 #include "map.h"
+#include "progress.h"
 
 
 typedef struct {
@@ -12,6 +13,7 @@ typedef struct {
     tbge_map_t* map;
     tbge_history_t* history;
     tbge_commands_t* commands;
+    tbge_progress_t* progress;
 } tbge_game_t;
 
 void game_free(tbge_game_t* game);
