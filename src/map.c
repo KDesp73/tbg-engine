@@ -196,7 +196,7 @@ int map_set_location(tbge_map_t* map, int target_node_id)
     EXIT_WITH_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
 }
 
-void map_log(tbge_map_t* map)
+void map_log(const tbge_map_t* map)
 {
     tbge_node_t* current = map_search_node(map, map->current_node);
     if(!current) return;

@@ -25,6 +25,7 @@ int player_pick_item(tbge_player_t* player, tbge_item_t* item);
 int player_pick_item_id(tbge_player_t* player, int id, tbge_map_t* map);
 int player_has_item(tbge_player_t* player, int item_id);
 void player_show(const tbge_player_t* player);
+void player_log(const tbge_player_t* player);
 
 typedef enum {
     PLAYER_STATUS_INTERNAL_ERROR=-10,

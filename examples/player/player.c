@@ -32,11 +32,13 @@ int main(int argc, char** argv) {
     node_show(GAME.map->nodes[0]);
 
     player_pick_item_id(GAME.player, ITEM_NOTE, GAME.map);
+    player_log(GAME.player);
 
     player_show(GAME.player);
     node_show(GAME.map->nodes[0]);
 
     player_pick_item_id(GAME.player, ITEM_BED, GAME.map);
+    player_log(GAME.player);
     player_show(GAME.player);
     node_show(GAME.map->nodes[0]);
 

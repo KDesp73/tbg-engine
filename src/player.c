@@ -1,6 +1,7 @@
 #include "player.h"
 #include "extern/clib.h"
 #include "item.h"
+#include "logging.h"
 #include "map.h"
 #include "ui.h"
 #include "utils.h"
@@ -77,4 +78,22 @@ void player_show(const tbge_player_t* player)
     PRNT("\n");
 }
 
-// TODO: player_log (See map_log)
+void player_log(const tbge_player_t* player)
+{
+    switch (player->status) {
+    case PLAYER_STATUS_OK:
+        break;
+    case PLAYER_STATUS_INTERNAL_ERROR:
+        PLAYER_LOG_ERR("Internal error");
+        break;
+    case PLAYER_STATUS_ITEM_NOT_FOUND:
+        PLAYER_LOG_ERR("Item was not found");
+        break;
+    case PLAYER_STATUS_ITEM_NOT_EQUIPPABLE:
+        PLAYER_LOG_ERR("Item is not equippable");
+        break;
+    default:
+        PLAYER_LOG_ERR("Unknown status code: %d", player->status); 
+        break; 
+    }
+}

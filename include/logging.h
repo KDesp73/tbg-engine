@@ -8,4 +8,9 @@
 #define MAP_LOG_ERR(fmt, ...) \
     LOG(stderr, "MAP", fmt, ##__VA_ARGS__)
 
+#define PLAYER_LOG(fmt, ...) \
+    LOG(stdout, "PLAYER", fmt, ##__VA_ARGS__)
+#define PLAYER_LOG_ERR(fmt, ...) \
+    LOG(stderr, "PLAYER", fmt, ##__VA_ARGS__)
+
 #endif // LOGGING_H

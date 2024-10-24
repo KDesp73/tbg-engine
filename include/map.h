@@ -57,7 +57,7 @@ typedef struct {
     size_t capacity;
 } tbge_map_t;
 
-void map_log(tbge_map_t* map);
+void map_log(const tbge_map_t* map);
 tbge_map_t* map_init();
 int map_add(tbge_map_t* map, tbge_node_t* node);
 int map_remove(tbge_map_t* map, int id);
