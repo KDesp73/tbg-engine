@@ -1,5 +1,4 @@
 TODO: achievements
-TODO: map visualizer
 TODO: documentation
 TODO: ui
 TODO: map style status for all structs
@@ -14,3 +13,4 @@ DONE: player
 DONE: serialization
 DONE: _log methods for all structs
 DONE: _show methods for all structs
+DONE: map visualizer

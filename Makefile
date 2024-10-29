@@ -9,11 +9,19 @@ INCLUDE_DIR = include
 BUILD_DIR = build
 DIST_DIR = dist
 EXAMPLES_BIN = examples/bin
+LIBS_INSTALL_DIR = /usr/lib
+HEADERS_INSTALL_DIR = /usr/local/include/tbge
 
-# Target and version info
+# Targets
 SHARED = libtbge.so
 STATIC = libtbge.a
-VERSION = 0.1.0
+
+# Version info
+version_file = include/globals.h
+VERSION_MAJOR = $(shell sed -n -e 's/\#define TBGE_VERSION_MAJOR \([0-9]*\)/\1/p' $(version_file))
+VERSION_MINOR = $(shell sed -n -e 's/\#define TBGE_VERSION_MINOR \([0-9]*\)/\1/p' $(version_file))
+VERSION_PATCH = $(shell sed -n -e 's/\#define TBGE_VERSION_PATCH \([0-9]*\)/\1/p' $(version_file))
+VERSION = $(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 
 # Determine the build type
 ifneq ($(type), RELEASE)
@@ -67,18 +75,23 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c ## Compile source files with progress
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 .PHONY: install
-install: all ## Install the libraries to /usr/lib/
-	@echo "[INFO] Installing $(STATIC) to /usr/lib/"
-	cp $(STATIC) /usr/lib/$(STATIC)
-	@echo "[INFO] Installing $(SHARED) to /usr/lib/"
-	cp $(SHARED) /usr/lib/$(SHARED)
+install: all ## Install the libraries and headers
+	@echo "[INFO] Installing $(STATIC) to $(LIB_INSTALL_DIR)"
+	cp $(STATIC) $(LIB_INSTALL_DIR)/$(STATIC)
+	@echo "[INFO] Installing $(SHARED) to $(LIB_INSTALL_DIR)"
+	cp $(SHARED) $(LIB_INSTALL_DIR)/$(SHARED)
+	@echo "[INFO] Installing headers to $(HEADERS_INSTALL_DIR)"
+	mkdir -p $(HEADERS_INSTALL_DIR)
+	cp -r include/* $(HEADERS_INSTALL_DIR)
 
 .PHONY: uninstall
-uninstall: ## Remove the libraries from /usr/lib/
+uninstall: ## Remove libraries and headers
 	@echo "[INFO] Uninstalling $(STATIC)"
-	rm -f /usr/lib/$(STATIC)
+	rm -f $(LIBS_INSTALL_DIR)/$(STATIC)
 	@echo "[INFO] Uninstalling $(SHARED)"
-	rm -f /usr/lib/$(SHARED)
+	rm -f $(LIBS_INSTALL_DIR)/$(SHARED)
+	@echo "[INFO] Uninstalling headers"
+	rm -rf $(HEADERS_INSTALL_DIR)
 
 .PHONY: clean
 clean: ## Remove all build files and the executable

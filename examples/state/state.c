@@ -1,3 +1,11 @@
+/**
+ * State example file
+ *
+ * @file examples/state.c
+ * @author KDesp73
+ * @date 29/10/2024
+ */
+
 #include "state.h"
 #include "extern/clib.h"
 #include "game.h"

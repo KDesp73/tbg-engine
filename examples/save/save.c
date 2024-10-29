@@ -1,3 +1,11 @@
+/**
+ * Save example file
+ *
+ * @file examples/save.c
+ * @author KDesp73
+ * @date 29/10/2024
+ */
+
 #include "extern/clib.h"
 #include "game.h"
 #include "progress.h"
