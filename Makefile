@@ -16,7 +16,8 @@ HEADERS_INSTALL_DIR = /usr/local/include/tbge
 SHARED = libtbge.so
 STATIC = libtbge.a
 
-# Version info
+# Project info
+PROJECT = tbge
 version_file = include/globals.h
 VERSION_MAJOR = $(shell sed -n -e 's/\#define TBGE_VERSION_MAJOR \([0-9]*\)/\1/p' $(version_file))
 VERSION_MINOR = $(shell sed -n -e 's/\#define TBGE_VERSION_MINOR \([0-9]*\)/\1/p' $(version_file))
@@ -76,10 +77,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c ## Compile source files with progress
 
 .PHONY: install
 install: all ## Install the libraries and headers
-	@echo "[INFO] Installing $(STATIC) to $(LIB_INSTALL_DIR)"
-	cp $(STATIC) $(LIB_INSTALL_DIR)/$(STATIC)
-	@echo "[INFO] Installing $(SHARED) to $(LIB_INSTALL_DIR)"
-	cp $(SHARED) $(LIB_INSTALL_DIR)/$(SHARED)
+	@echo "[INFO] Installing $(STATIC) to $(LIBS_INSTALL_DIR)"
+	cp $(STATIC) $(LIBS_INSTALL_DIR)/$(STATIC)
+	@echo "[INFO] Installing $(SHARED) to $(LIBS_INSTALL_DIR)"
+	cp $(SHARED) $(LIBS_INSTALL_DIR)/$(SHARED)
 	@echo "[INFO] Installing headers to $(HEADERS_INSTALL_DIR)"
 	mkdir -p $(HEADERS_INSTALL_DIR)
 	cp -r include/* $(HEADERS_INSTALL_DIR)
@@ -107,7 +108,7 @@ distclean: clean ## Perform a full clean, including backup and temporary files
 dist: $(SRC_FILES) ## Create a tarball of the project
 	@echo "[INFO] Creating a tarball for version $(VERSION)"
 	mkdir -p $(DIST_DIR)
-	tar -czvf $(DIST_DIR)/$(TARGET)-$(VERSION).tar.gz $(SRC_DIR) $(INCLUDE_DIR) Makefile README.md
+	tar -czvf $(DIST_DIR)/$(PROJECT)-$(VERSION).tar.gz $(SRC_DIR) $(INCLUDE_DIR) Makefile README.md
 
 .PHONY: examples
 examples: static ## Build all examples into binaries

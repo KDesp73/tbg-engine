@@ -3,7 +3,7 @@
 
 #define TBGE_VERSION_MAJOR 0
 #define TBGE_VERSION_MINOR 1
-#define TBGE_VERSION_PATCH 0
+#define TBGE_VERSION_PATCH 1
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
