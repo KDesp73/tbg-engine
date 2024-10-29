@@ -20,6 +20,7 @@ typedef struct {
 
 tbge_item_t* item_init(int id, const char* name, const char* description, int equipable);
 void item_free(tbge_item_t** item);
+void item_log(const tbge_item_t* item);
 
 #define MAX_ITEMS 128
 typedef struct {

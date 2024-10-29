@@ -10,15 +10,16 @@
 
 
 typedef struct {
-    tbge_player_t* player;
-    tbge_map_t* map;
-    tbge_history_t* history;
-    tbge_commands_t* commands;
-    tbge_progress_t* progress;
-    tbge_mission_t* mission;
+    tbge_player_t* player; // saved in file
+    tbge_map_t* map; // saved in file
+    tbge_history_t* history; // saved seperately
+    tbge_commands_t* commands; // not saved 
+    tbge_progress_t* progress; // saved in file
+    tbge_mission_t* mission; // saved in file
 } tbge_game_t;
 
 void game_free(tbge_game_t* game);
+
 
 #define DEFINE_CLEANUP \
     ____tgbe_test____ = 0;void cleanup() { game_free(&GAME); }

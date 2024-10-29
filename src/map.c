@@ -1,4 +1,5 @@
 #include "map.h"
+#include "extern/clib.h"
 #include "item.h"
 #include "logging.h"
 #include "utils.h"
@@ -11,13 +12,17 @@
 
 void node_show(const tbge_node_t* node)
 {
+    if(node == NULL) return;
+
     PRNT("Node: %s%s%s\n", ANSI_PURPLE, node->name, ANSI_RESET);
     PRNT("%s%s%s\n", ANSI_ITALIC, node->description, ANSI_RESET);
 
     PRNT("\n");
 
+    if(node->items == NULL) return;
     for(size_t i = 0; i < node->items->count; ++i) {
-        PRNT("%zu. %s\n", i+1, node->items->items[i]->name);
+        if(node->items->items[i] == NULL) continue;
+        PRNT("%zu. %s - %s\n", i+1, node->items->items[i]->name, node->items->items[i]->description);
     }
     PRNT("\n");
 }
@@ -86,13 +91,13 @@ tbge_map_t* map_init()
 {
     tbge_map_t* map = (tbge_map_t*)malloc(sizeof(tbge_map_t));
     if (!map) {
-        printf("Memory allocation failed\n");
+        fprintf(stderr, "Memory allocation failed\n");
         return NULL;
     }
 
     map->nodes = (tbge_node_t**)malloc(INITIAL_MAP_CAPACITY * sizeof(tbge_node_t*));
     if (!map->nodes) {
-        printf("Memory allocation failed\n");
+        fprintf(stderr, "Memory allocation failed\n");
         free(map);
         return NULL;
     }
@@ -158,7 +163,7 @@ void map_free(tbge_map_t** map)
     }
 }
 
-tbge_node_t* map_search_node(tbge_map_t* map, int node)
+tbge_node_t* map_search_node(const tbge_map_t* map, int node)
 {
     for(size_t i = 0; i < map->count; ++i) {
         if(map->nodes[i]->id == node) return map->nodes[i];
@@ -196,6 +201,7 @@ int map_set_location(tbge_map_t* map, int target_node_id)
     EXIT_WITH_MAP_STATUS(map, MAP_STATUS_NODE_NOT_FOUND);
 }
 
+#ifdef VERBOSE
 void map_log(const tbge_map_t* map)
 {
     tbge_node_t* current = map_search_node(map, map->current_node);
@@ -226,6 +232,12 @@ void map_log(const tbge_map_t* map)
         break;
     }
 }
+#else
+void map_log(const tbge_map_t* map)
+{
+    return;
+}
+#endif // VERBOSE
 
 int map_lock(tbge_map_t* map, int node_id)
 {
@@ -245,7 +257,12 @@ int map_unlock(tbge_map_t* map, int node_id)
     EXIT_WITH_MAP_STATUS(map, MAP_STATUS_OK);
 }
 
-const char* map_current_node(tbge_map_t* map)
+tbge_node_t* map_current_node(tbge_map_t* map)
+{
+    return map_search_node(map, map->current_node);
+}
+
+const char* map_current_node_name(tbge_map_t* map)
 {
     tbge_node_t* n = map_search_node(map, map->current_node);
     if(!n) {

@@ -1,8 +1,13 @@
+#include "extern/clib.h"
 #include "mission.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 
+void objective_log(const tbge_objective_t* objective)
+{
+    printf("Objective {id: %d, description: \"%s\"}, completed: %s\n", objective->id, objective->description, BOOL(objective->completed));
+}
 
 tbge_objective_t* objective_init(int id, const char* description)
 {

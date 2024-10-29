@@ -1,9 +1,20 @@
 #include "item.h"
+#include "extern/clib.h"
 #include "utils.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+void item_log(const tbge_item_t* item)
+{
+    printf("Item {id: %d, name: \"%s\", description: \"%s\", equippable: %s}\n",
+            item->id,
+            item->name,
+            item->description,
+            BOOL(item->equippable)
+            );
+}
 
 int items_remove(tbge_items_t* items, int id)
 {

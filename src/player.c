@@ -12,7 +12,8 @@ tbge_player_t* player_init(const char* name)
 {
     tbge_player_t* result = (tbge_player_t*) malloc(sizeof(tbge_player_t));
 
-    result->name = strdup(name);
+    if(name != NULL)
+        result->name = strdup(name);
     result->item_count = 0;
 
     return result;
@@ -44,7 +45,8 @@ int player_pick_item(tbge_player_t* player, tbge_item_t* item)
 int player_has_item(tbge_player_t* player, int item_id)
 {
     for(size_t i = 0; i < player->item_count; ++i){
-        if(player->inventory[i]->id == item_id) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_OK);
+        if(player->inventory[i]->id == item_id) 
+            EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_OK);
     }
     EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_FOUND);
 }
@@ -56,7 +58,8 @@ int player_pick_item_id(tbge_player_t* player, int id, tbge_map_t* map)
     
     for(size_t i = 0; i < node->items->count; ++i) {
         if(id == node->items->items[i]->id){
-            if(!node->items->items[i]->equippable) EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_EQUIPPABLE);
+            if(!node->items->items[i]->equippable) 
+                EXIT_WITH_PLAYER_STATUS(player, PLAYER_STATUS_ITEM_NOT_EQUIPPABLE);
 
             player_pick_item(player, node->items->items[i]);
             items_remove(node->items, id);
@@ -73,7 +76,7 @@ void player_show(const tbge_player_t* player)
 
     PRNT("\n%sInventory%s\n", ANSI_BOLD, ANSI_RESET);
     for(size_t i = 0; i < player->item_count; ++i){
-        PRNT("%zu. %s\n", i+1, player->inventory[i]->name);
+        PRNT("%zu. %s - %s\n", i+1, player->inventory[i]->name, player->inventory[i]->description);
     }
     PRNT("\n");
 }

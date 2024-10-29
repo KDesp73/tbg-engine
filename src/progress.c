@@ -12,7 +12,7 @@ int progress_search(tbge_progress_t* progress, int checkpoint)
     return -1;
 }
 
-void progress_save(tbge_progress_t* progress, int checkpoint)
+void progress_save_checkpoint(tbge_progress_t* progress, int checkpoint)
 {
     if(progress_search(progress, checkpoint) < 0){
         progress->status = -1;
@@ -20,10 +20,10 @@ void progress_save(tbge_progress_t* progress, int checkpoint)
     }
 
     if(!clib_file_exists(CHECKPOINT_FILE)){
-        clib_file_write(CHECKPOINT_FILE, "-1", "w");
+        clib_file_write(CHECKPOINT_FILE, "-1", "wb");
     }
 
-    char* file_cp_s = clib_file_read(CHECKPOINT_FILE, "r");
+    char* file_cp_s = clib_file_read(CHECKPOINT_FILE, "rb");
 
     if(file_cp_s == NULL || !is_number(file_cp_s)){
         progress->status = -1;
@@ -35,7 +35,7 @@ void progress_save(tbge_progress_t* progress, int checkpoint)
 
     if(file_cp <= checkpoint) {
         char* its = clib_str_format("%d", checkpoint);
-        clib_file_write(CHECKPOINT_FILE, its, "w");
+        clib_file_write(CHECKPOINT_FILE, its, "wb");
         free(its);
         progress->status = 1;
         return;

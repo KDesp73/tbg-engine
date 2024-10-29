@@ -27,52 +27,62 @@ int main(int argc, char** argv) {
                 NODE_TOILET,
                 NODE_BEDROOM,
                 END_CONNECTIONS));
+    map_log(GAME.map);
+
     map_add(GAME.map, node_init(NODE_TOILET, "Toilet", "Toilet description", NODE_LOCKED, NULL,
                 NODE_LIVING_ROOM,
                 END_CONNECTIONS));
+    map_log(GAME.map);
+
     map_add(GAME.map, node_init(NODE_KITCHEN, "Kitchen", "Kitchen description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_BALCONY,
                 END_CONNECTIONS));
+    map_log(GAME.map);
+
     map_add(GAME.map, node_init(NODE_BALCONY, "Balcony", "Balcony description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_KITCHEN,
                 END_CONNECTIONS));
+    map_log(GAME.map);
+
     map_add(GAME.map, node_init(NODE_BEDROOM, "Bedroom", "Bedroom description", NODE_UNLOCKED, NULL,
                 NODE_LIVING_ROOM,
                 NODE_TOILET,
                 END_CONNECTIONS));
-
-
-    map_set_location(GAME.map, NODE_LIVING_ROOM);
-    map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
-
-    map_change_node(GAME.map, NODE_BEDROOM);
-    map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
-
-    map_change_node(GAME.map, NODE_KITCHEN);
-    map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
-
-    map_change_node(GAME.map, NODE_TOILET);
-    map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
-
-    map_unlock(GAME.map, NODE_TOILET);
     map_log(GAME.map);
 
-    map_change_node(GAME.map, NODE_TOILET);
-    map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
-
-    map_lock(GAME.map, NODE_LIVING_ROOM);
+    if(map_set_location(GAME.map, NODE_LIVING_ROOM) != 1) return 1;
+    node_show(map_current_node(GAME.map));
     map_log(GAME.map);
 
-    map_change_node(GAME.map, NODE_LIVING_ROOM);
+    if(map_change_node(GAME.map, NODE_BEDROOM) == 1)
+        node_show(map_current_node(GAME.map));
     map_log(GAME.map);
-    printf("Current node: %s\n", map_current_node(GAME.map));
+
+    if(map_change_node(GAME.map, NODE_KITCHEN) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
+
+    if(map_change_node(GAME.map, NODE_TOILET) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
+
+    if(map_unlock(GAME.map, NODE_TOILET) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
+
+    if(map_change_node(GAME.map, NODE_TOILET) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
+
+    if(map_lock(GAME.map, NODE_LIVING_ROOM) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
+
+    if(map_change_node(GAME.map, NODE_LIVING_ROOM) == 1)
+        node_show(map_current_node(GAME.map));
+    map_log(GAME.map);
 
     return 0;
 }

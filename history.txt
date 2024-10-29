@@ -133,3 +133,8 @@ exit
 concat hello world
 clear
 exit
+exit
+clear
+exit
+q
+exit

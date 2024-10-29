@@ -10,6 +10,7 @@ typedef struct {
 
 tbge_objective_t* objective_init(int id, const char* description);
 void objective_free(tbge_objective_t** objective);
+void objective_log(const tbge_objective_t* objective);
 
 typedef struct {
     char* name;

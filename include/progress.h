@@ -23,12 +23,12 @@ void progress_free(tbge_progress_t** progress);
  *
  * @return int 1 if the change happend, 0 if nothing happened, <0 if error
  */
-void progress_save(tbge_progress_t* progress, int checkpoint);
+void progress_save_checkpoint(tbge_progress_t* progress, int checkpoint);
 int progress_search(tbge_progress_t* progress, int checkpoint);
 
 
 #define CHECKPOINT_GROUP(progress, cp) \
-    progress_save(progress, cp); \
+    progress_save_checkpoint(progress, cp); \
     if(progress->status == 1)
 
 
