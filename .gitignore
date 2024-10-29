@@ -11,5 +11,6 @@ libtbge.so
 examples/bin/
 examples/bin/*
 save_*
+history.txt
 
 .changelog
