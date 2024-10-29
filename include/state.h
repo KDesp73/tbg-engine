@@ -19,11 +19,35 @@ typedef struct {
 tbge_save_t save_parse(const char* filename);
 char* save_name(size_t slot);
 void save_log(tbge_save_t save);
-char* save_latest(const char* saves[], size_t count, size_t slot);
+char* save_latest(size_t slot);
 const char** save_search(const char* directories[], size_t dir_count, size_t* res_count);
+int save_loaded(tbge_game_t* game);
+
+#define SAVE_GAME(f, gp) \
+    do { \
+        FILE* __file = fopen(f, "wb"); \
+        game_save(__file, gp); \
+        fclose(__file); \
+    } while(0)
+
+#define LOAD_GAME(slot) \
+    do { \
+        char* __latest__ = save_latest(slot); \
+        if (__latest__ != NULL) { \
+            FILE* __file__ = fopen(__latest__, "rb"); \
+            game_load_stack(__file__, &GAME); \
+            fclose(__file__); \
+            free(__latest__); \
+        } else { \
+            GAME = (tbge_game_t){0}; \
+        } \
+    } while(0)
+
+
 
 int game_save(FILE* file, tbge_game_t* game);
 tbge_game_t* game_load(FILE* file);
+int game_load_stack(FILE* file, tbge_game_t* game);
 
 int player_save(FILE* file, tbge_player_t* player);
 tbge_player_t* player_load(FILE* file);

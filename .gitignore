@@ -10,5 +10,6 @@ libtbge.so
 # Example executables
 examples/bin/
 examples/bin/*
+save_
 
 .changelog

@@ -8,7 +8,33 @@
 #include <time.h>
 #include <stdio.h>
 
-char* save_latest(const char* saves[], size_t count, size_t slot) {
+int save_loaded(tbge_game_t* game)
+{
+    return (
+        game->map != NULL ||
+        game->player != NULL ||
+        game->mission != NULL ||
+        game->progress != NULL
+    );
+}
+
+
+char* save_latest(size_t slot) {
+    char cwd[256];
+
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        perror("getcwd() error");
+        return NULL;
+    }
+
+    const char* dirs[] = {
+        cwd
+        // TODO: add more
+    };
+
+    size_t count;
+    const char** saves = save_search(dirs, ARRAY_LEN(dirs), &count);
+
     const char* latest_save = NULL;
     char* latest_date = NULL;
     char* latest_time = NULL;
@@ -17,8 +43,6 @@ char* save_latest(const char* saves[], size_t count, size_t slot) {
         char* filename = get_filename(saves[i]);
         tbge_save_t save = save_parse(filename);
         
-        save_log(save);
-
         if (save.is_save_file && save.slot == slot) {
             if (latest_date == NULL || 
                 strcmp(save.date, latest_date) > 0 || 
@@ -41,8 +65,12 @@ char* save_latest(const char* saves[], size_t count, size_t slot) {
     free(latest_date);
     free(latest_time);
 
-    // Return a copy of the latest save path
-    return latest_save ? strdup(latest_save) : NULL;
+    char* result = (latest_save != NULL) ? strdup(latest_save) : NULL;
+
+    for(size_t i = 0; i < count; i++) if(saves[i]) free((char*)saves[i]);
+    free(saves);
+
+    return result;
 }
 
 #include <dirent.h>
@@ -182,7 +210,6 @@ tbge_player_t* player_load(FILE* file)
     // Load player stats and status
     if (fread(&player->status, sizeof(int), 1, file) != 1 ||
         fread(&player->stats, sizeof(tbge_stats_t), 1, file) != 1) {
-        perror("Failed to read player stats or status");
         free(player);
         return NULL;
     }
@@ -190,13 +217,11 @@ tbge_player_t* player_load(FILE* file)
     // Load player name
     size_t name_len;
     if (fread(&name_len, sizeof(size_t), 1, file) != 1) {
-        perror("Failed to read player name length");
         free(player);
         return NULL;
     }
     player->name = malloc(name_len);
     if (!player->name || fread(player->name, sizeof(char), name_len, file) != name_len) {
-        perror("Failed to read player name");
         free(player->name);
         free(player);
         return NULL;
@@ -204,7 +229,6 @@ tbge_player_t* player_load(FILE* file)
 
     // Load inventory count and each item
     if (fread(&player->item_count, sizeof(size_t), 1, file) != 1) {
-        perror("Failed to read inventory count");
         free(player->name);
         free(player);
         return NULL;
@@ -212,7 +236,6 @@ tbge_player_t* player_load(FILE* file)
     for (size_t i = 0; i < player->item_count; i++) {
         player->inventory[i] = item_load(file);
         if (!player->inventory[i]) {
-            perror("Failed to load inventory item");
             player_free(&player);
             return NULL;
         }
@@ -655,7 +678,8 @@ int game_save(FILE* file, tbge_game_t* game)
 }
 
 // Load function for tbge_game_t
-tbge_game_t* game_load(FILE* file) {
+tbge_game_t* game_load(FILE* file)
+{
     tbge_game_t* game = malloc(sizeof(tbge_game_t));
     if (!game) return NULL;
 
@@ -680,4 +704,28 @@ load_error:
     if (game->progress) progress_free(&game->progress);
     free(game);
     return NULL;
+}
+
+int game_load_stack(FILE* file, tbge_game_t* game)
+{
+    game->player = player_load(file);
+    if (!game->player) goto load_error;
+
+    game->map = map_load(file);
+    if (!game->map) goto load_error;
+
+    game->progress = progress_load(file);
+    if (!game->progress) goto load_error;
+
+    game->mission = mission_load(file);
+    if (!game->mission) goto load_error;
+
+    return 0;
+
+load_error:
+    // Free any loaded components if loading fails
+    if (game->player) player_free(&game->player);
+    if (game->map) map_free(&game->map);
+    if (game->progress) progress_free(&game->progress);
+    return -1;
 }

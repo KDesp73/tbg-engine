@@ -12,7 +12,7 @@
 typedef struct {
     tbge_player_t* player; // saved in file
     tbge_map_t* map; // saved in file
-    tbge_history_t* history; // saved seperately
+    tbge_history_t* history; // saved seperately (history.txt)
     tbge_commands_t* commands; // not saved 
     tbge_progress_t* progress; // saved in file
     tbge_mission_t* mission; // saved in file

@@ -303,14 +303,12 @@ void save_load_game()
                 END_CONNECTIONS));
 
     GAME.progress = progress_init(0, 1, 2, 3, 4, 5, 6, END_CHECKPOINTS);
-    GAME.progress->last_checkpoint = 3;
+    GAME.progress->last_checkpoint = 5;
 
     char* save = save_name(1);
-    FILE* file = fopen(save, "wb");
-    game_save(file, &GAME);
-    fclose(file);
+    SAVE_GAME(save, &GAME);
 
-    file = fopen(save, "rb");
+    FILE* file = fopen(save, "rb");
     tbge_game_t* lg = game_load(file);
     fclose(file);
     free(save);
