@@ -12,5 +12,6 @@ examples/bin/
 examples/bin/*
 save_*
 history.txt
+vgcore.*
 
 .changelog

@@ -3,8 +3,6 @@ TODO: map visualizer
 TODO: documentation
 TODO: ui
 TODO: map style status for all structs
-TODO: _log methods for all structs
-TODO: _show methods for all structs
 DONE: items
 DONE: map
 DONE: game
@@ -14,3 +12,5 @@ DONE: missions
 DONE: change checkpoint saving method
 DONE: player
 DONE: serialization
+DONE: _log methods for all structs
+DONE: _show methods for all structs

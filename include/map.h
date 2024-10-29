@@ -69,5 +69,6 @@ int map_lock(tbge_map_t* map, int node_id);
 int map_unlock(tbge_map_t* map, int node_id);
 const char* map_current_node_name(tbge_map_t* map); 
 tbge_node_t* map_current_node(tbge_map_t* map); 
+void map_show(const tbge_map_t* map);
 
 #endif // MAP_H

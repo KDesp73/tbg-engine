@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added save/load methods for all structs
 - Implemented missions
 - Implemented checkpoint based progress
 - Added main method macro

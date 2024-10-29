@@ -7,6 +7,7 @@
  */
 
 #include "command.h"
+#include "tokenizer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define CLIB_IMPLEMENTATION
@@ -23,6 +24,7 @@ int help_command(char** tokens, size_t count)
 int exit_command(char** tokens, size_t count)
 {
     printf("Goodbye\n");
+    free_tokens(&tokens, count);
     exit(0);
 }
 
@@ -41,6 +43,13 @@ int concat_command(char** tokens, size_t count)
     return 1;
 }
 
+int open_command(char** tokens, size_t count)
+{
+    printf("%s has been opened\n", tokens[1]);
+    
+    return 1;
+}
+
 int main(int argc, char** argv) {
     GAME.commands = commands_init(10);
 
@@ -48,6 +57,7 @@ int main(int argc, char** argv) {
     commands_add(GAME.commands, command_init("exit", 0, exit_command));
     commands_add(GAME.commands, command_init("history", 0, history_command));
     commands_add(GAME.commands, command_init("concat", 2, concat_command));
+    commands_add(GAME.commands, command_init("open", 1, open_command));
     
     char input[MAX_INPUT_LENGTH];
     GAME.history = history_load();
@@ -61,8 +71,6 @@ int main(int argc, char** argv) {
             fprintf(stderr, "Command exited with error code %d\n", status);
         }
     }
-    
-
 
     return 0;
 }

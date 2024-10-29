@@ -26,6 +26,8 @@ char* history_to_string(const tbge_history_t* history)
 
 void history_add(tbge_history_t* history, const char* command) 
 {
+    if(history == NULL) return;
+
     // If history is full, remove the first element and shift everything left
     if (history->count >= HISTORY_CAPACITY) {
         free(history->commands[0]);
@@ -54,12 +56,16 @@ void history_clear(tbge_history_t* history)
 
 tbge_history_t* history_load()
 {
-    char* in = clib_file_read(HISTORY_FILE, "r");
+    char* in = NULL;
+    char* input_copy = NULL;
+    if(clib_file_exists(HISTORY_FILE)) {
+        in = clib_file_read(HISTORY_FILE, "r");
 
-    char* input_copy = strdup(in);
-    if (!input_copy) {
-        free(in);
-        return NULL;
+        input_copy = strdup(in);
+        if (!input_copy) {
+            free(in);
+            return NULL;
+        }
     }
 
     tbge_history_t* h = (tbge_history_t*) malloc(sizeof(tbge_history_t));
@@ -69,8 +75,6 @@ tbge_history_t* history_load()
         return NULL;
     }
 
-
-    char* token = strtok(input_copy, "\n");
     h->commands = NULL;
     h->count = 0;
     
@@ -82,6 +86,9 @@ tbge_history_t* history_load()
         return NULL;
     }
 
+    if(input_copy == NULL) return h;
+
+    char* token = strtok(input_copy, "\n");
     while (token != NULL) {
         h->commands[h->count] = strdup(token);
         if (!h->commands[h->count]) {

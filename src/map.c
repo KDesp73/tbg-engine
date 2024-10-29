@@ -1,4 +1,5 @@
 #include "map.h"
+#define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
 #include "item.h"
 #include "logging.h"
@@ -271,5 +272,52 @@ const char* map_current_node_name(tbge_map_t* map)
     }
 
     return n->name;
+}
+
+void map_show(const tbge_map_t* map) {
+    if (!map || map->count == 0) {
+        printf("The map is empty.\n");
+        return;
+    }
+
+    printf("%s[MAP]%s\n", ANSI_COMBINE(ANSI_PURPLE, ANSI_BOLD), ANSI_RESET);
+
+    for (size_t i = 0; i < map->count; i++) {
+        tbge_node_t* node = map->nodes[i];
+
+        // Print node ID, name, and lock status
+        printf("Node %s%d%s [%s] %s %s\n", 
+            ANSI_BLUE,
+            node->id, 
+            ANSI_RESET,
+            node->name,
+            node->locked ? "🔒" : "",
+            (map->current_node == node->id) ? ANSI_GREEN "<--" ANSI_RESET : "");
+
+        if (node->accessible_node_count == 0) {
+            printf("  (No connections)\n");
+            continue;
+        }
+
+        // Print connections for each node
+        for (size_t j = 0; j < node->accessible_node_count; j++) {
+            int connected_node_id = node->accessible_nodes[j];
+            tbge_node_t* connected_node = map_search_node(map, connected_node_id);
+
+            if (connected_node) {
+                printf("     %s── Node %d [%s] %s\n", 
+                    (j == node->accessible_node_count-1) ? "└" : "├",
+                    connected_node->id, 
+                    connected_node->name, 
+                    connected_node->locked ? "🔒" : "");
+            } else {
+                printf("     %s── Node %d [Not Found]\n", 
+                    (j == node->accessible_node_count-1) ? "└" : "├",
+                    connected_node_id);
+            }
+        }
+
+        printf("\n"); // Space between nodes
+    }
 }
 

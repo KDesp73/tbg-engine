@@ -32,9 +32,12 @@ int command_run(tbge_commands_t* commands, const char* input)
         if(STREQ(command, commands->items[i]->name)){
             if(count-1 != commands->items[i]->noa){
                 fprintf(stderr, "Command '%s' requires %zu arguments\n", command, commands->items[i]->noa);
+                free_tokens(&tokens, count);
                 return -2;
             }
-            return commands->items[i]->run_func(tokens, count);
+            int rc = commands->items[i]->run_func(tokens, count);
+            free_tokens(&tokens, count);
+            return rc;
         }
     }
     free_tokens(&tokens, count);

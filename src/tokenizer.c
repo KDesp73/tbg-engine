@@ -10,7 +10,7 @@ void free_tokens(char*** tokens, size_t count)
 {
     if (!*tokens) return; // Protect against NULL pointer
 
-    SAFE_FREE_ITEMS(*tokens, count);
+    SAFE_FREE_ITEMS((*tokens), count);
     SAFE_FREE(*tokens);
 }
 
@@ -105,12 +105,12 @@ char** tokenize(const char* input, size_t *count)
 
             strncpy(tokens[*count], in + start, token_length);
             tokens[*count][token_length] = '\0'; // Null-terminate the token
-            (*count)++;
+            (*count) += 1;
         }
     }
 
     tokens[*count] = NULL; // Null-terminate the array
-    // SAFE_FREE(in);
+    SAFE_FREE(in);
     return tokens;
 }
 

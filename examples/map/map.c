@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
                 END_CONNECTIONS));
     map_log(GAME.map);
 
+
     if(map_set_location(GAME.map, NODE_LIVING_ROOM) != 1) return 1;
     node_show(map_current_node(GAME.map));
     map_log(GAME.map);
@@ -83,6 +84,8 @@ int main(int argc, char** argv) {
     if(map_change_node(GAME.map, NODE_LIVING_ROOM) == 1)
         node_show(map_current_node(GAME.map));
     map_log(GAME.map);
+
+    map_show(GAME.map);
 
     return 0;
 }
