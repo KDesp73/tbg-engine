@@ -1,8 +1,133 @@
 #include "state.h"
+#define CLIB_IMPLEMENTATION
+#include "extern/clib.h"
+#include "game.h"
 #include "item.h"
 #include "player.h"
+#include "utils.h"
+#include <time.h>
 #include <stdio.h>
 
+char* save_latest(const char* saves[], size_t count, size_t slot) {
+    const char* latest_save = NULL;
+    char* latest_date = NULL;
+    char* latest_time = NULL;
+
+    for (size_t i = 0; i < count; i++) {
+        char* filename = get_filename(saves[i]);
+        tbge_save_t save = save_parse(filename);
+        
+        save_log(save);
+
+        if (save.is_save_file && save.slot == slot) {
+            if (latest_date == NULL || 
+                strcmp(save.date, latest_date) > 0 || 
+                (strcmp(save.date, latest_date) == 0 && 
+                 strcmp(save.time, latest_time) > 0)
+            ) {
+                // Free previously stored date and time if they exist
+                free(latest_date);
+                free(latest_time);
+
+                // Make copies of the new latest date and time
+                latest_date = strdup(save.date);
+                latest_time = strdup(save.time);
+                latest_save = saves[i];
+            }
+        }
+    }
+
+    // Clean up allocated memory
+    free(latest_date);
+    free(latest_time);
+
+    // Return a copy of the latest save path
+    return latest_save ? strdup(latest_save) : NULL;
+}
+
+#include <dirent.h>
+#include <sys/stat.h>
+const char** save_search(const char* directories[], size_t dir_count, size_t* res_count)
+{
+    const char** save_list = malloc(MAX_SAVES * sizeof(char*));
+    if (!save_list) return NULL;
+    
+    *res_count = 0;
+
+    for (size_t i = 0; i < dir_count; i++) {
+        DIR* dir = opendir(directories[i]);
+        if (!dir) {
+            perror("Failed to open directory");
+            continue;
+        }
+
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+            // Check if the file name matches the save pattern
+            if (strncmp(entry->d_name, "save_", 5) == 0) {
+                if (*res_count < MAX_SAVES) {
+                    save_list[*res_count] = malloc(MAX_FILENAME_LENGTH);
+                    if (save_list[*res_count]) {
+                        snprintf((char*) save_list[*res_count], MAX_FILENAME_LENGTH, "%s/%s", directories[i], entry->d_name);
+                        *res_count += 1;
+                    }
+                }
+            }
+        }
+        closedir(dir);
+    }
+
+    return save_list;
+}
+
+char* save_name(size_t slot)
+{
+    char* dt = date_time();
+    char* res = clib_str_format("save_%s_%zu", dt, slot);
+    free(dt);
+    return res;
+}
+
+tbge_save_t save_parse(const char* filename)
+{
+    tbge_save_t result = {0};
+    
+    char buffer[50];
+    strncpy(buffer, filename, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    char* token = strtok(buffer, "_");
+    if (token && strcmp(token, "save") == 0) {
+        result.is_save_file = 1;  // Indicate it's a valid save file
+    } else {
+        result.is_save_file = 0;
+        return result;
+    }
+
+    token = strtok(NULL, "_");
+    if (token) {
+        strncpy(result.date, token, sizeof(result.date) - 1);
+        result.date[sizeof(result.date) - 1] = '\0';
+    }
+
+    token = strtok(NULL, "_");
+    if (token) {
+        strncpy(result.time, token, sizeof(result.time) - 1);
+        result.time[sizeof(result.time) - 1] = '\0';
+    }
+
+    token = strtok(NULL, "_");
+    if (token) {
+        result.slot = atoi(token);
+    }
+
+    return result;
+}
+
+void save_log(tbge_save_t save)
+{
+    printf("Save {slot: %zu, time: \"%s\", date: \"%s\", is_save: %s}\n", save.slot, save.time, save.date, BOOL(save.is_save_file));
+}
 
 int player_save(FILE* file, tbge_player_t* player)
 {
@@ -524,33 +649,35 @@ int game_save(FILE* file, tbge_game_t* game)
     if (player_save(file, game->player) != 0) return -1;
     if (map_save(file, game->map) != 0) return -1;
     if (progress_save(file, game->progress) != 0) return -1;
+    if (mission_save(file, game->mission) != 0) return -1;
 
     return 1;
 }
 
-// // Load function for tbge_game_t
-// tbge_game_t* game_load(FILE* file) {
-//     tbge_game_t* game = malloc(sizeof(tbge_game_t));
-//     if (!game) return NULL;
-//
-//     game->player = player_load();
-//     if (!game->player) goto load_error;
-//
-//     game->map = map_load();
-//     if (!game->map) goto load_error;
-//
-//     game->progress = progress_load_file();
-//     if (!game->progress) goto load_error;
-//
-//     // If history and commands have load functions, call them here
-//
-//     return game;  // Return the loaded game on success
-//
-// load_error:
-//     // Free any loaded components if loading fails
-//     if (game->player) free(game->player);
-//     if (game->map) map_free(&game->map);
-//     if (game->progress) progress_free(&game->progress);
-//     free(game);
-//     return NULL;
-// }
+// Load function for tbge_game_t
+tbge_game_t* game_load(FILE* file) {
+    tbge_game_t* game = malloc(sizeof(tbge_game_t));
+    if (!game) return NULL;
+
+    game->player = player_load(file);
+    if (!game->player) goto load_error;
+
+    game->map = map_load(file);
+    if (!game->map) goto load_error;
+
+    game->progress = progress_load(file);
+    if (!game->progress) goto load_error;
+
+    game->mission = mission_load(file);
+    if (!game->mission) goto load_error;
+
+    return game;
+
+load_error:
+    // Free any loaded components if loading fails
+    if (game->player) player_free(&game->player);
+    if (game->map) map_free(&game->map);
+    if (game->progress) progress_free(&game->progress);
+    free(game);
+    return NULL;
+}

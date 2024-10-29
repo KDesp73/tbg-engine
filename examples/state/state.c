@@ -1,5 +1,6 @@
 #include "state.h"
 #include "extern/clib.h"
+#include "game.h"
 #include "item.h"
 #include "map.h"
 #include "mission.h"
@@ -65,6 +66,7 @@ void save_load_progress()
     printf("\n");
 }
 
+// OK
 void save_load_map()
 {
     enum {
@@ -251,9 +253,80 @@ void save_load_mission()
     mission_free(&mission);
 }
 
+
+// OK
+void save_load_game()
+{
+    GAME.player = player_init("Kostas");
+    GAME.player->status = 69;
+    GAME.player->stats.health = 100;
+    GAME.player->stats.hunger = 5;
+    player_pick_item(GAME.player, item_init(0, "Note", "Note description", ITEM_EQUIPPABLE));
+    player_pick_item(GAME.player, item_init(1, "Sword", "Sword description", ITEM_EQUIPPABLE));
+
+    GAME.mission = mission_init("Mission name", "Mission description", "Mission resolutionn", 
+        objective_init(0, "Description 0"),
+        objective_init(1, "Description 1"),
+        objective_init(2, "Description 2"),
+        NULL
+    );
+    mission_complete_objective(GAME.mission, 1);
+
+    enum {
+        NODE_LIVING_ROOM = 0,
+        NODE_TOILET,
+        NODE_KITCHEN,
+        NODE_BALCONY,
+        NODE_BEDROOM,
+    };
+    GAME.map = map_init();
+    map_add(GAME.map, node_init(NODE_LIVING_ROOM, "Living Room", "The central part of the house", NODE_UNLOCKED, items_init(item_init(0, "Note", "Note desc", ITEM_EQUIPPABLE), NULL),
+                NODE_KITCHEN,
+                NODE_BALCONY,
+                NODE_TOILET,
+                NODE_BEDROOM,
+                END_CONNECTIONS));
+    map_add(GAME.map, node_init(NODE_TOILET, "Toilet", "Toilet description", NODE_LOCKED, NULL,
+                NODE_LIVING_ROOM,
+                END_CONNECTIONS));
+    map_add(GAME.map, node_init(NODE_KITCHEN, "Kitchen", "Kitchen description", NODE_UNLOCKED, NULL,
+                NODE_LIVING_ROOM,
+                NODE_BALCONY,
+                END_CONNECTIONS));
+    map_add(GAME.map, node_init(NODE_BALCONY, "Balcony", "Balcony description", NODE_UNLOCKED, NULL,
+                NODE_LIVING_ROOM,
+                NODE_KITCHEN,
+                END_CONNECTIONS));
+    map_add(GAME.map, node_init(NODE_BEDROOM, "Bedroom", "Bedroom description", NODE_UNLOCKED, items_init(item_init(0, "Note", "Note desc", ITEM_EQUIPPABLE), NULL),
+                NODE_LIVING_ROOM,
+                NODE_TOILET,
+                END_CONNECTIONS));
+
+    GAME.progress = progress_init(0, 1, 2, 3, 4, 5, 6, END_CHECKPOINTS);
+    GAME.progress->last_checkpoint = 3;
+
+    char* save = save_name(1);
+    FILE* file = fopen(save, "wb");
+    game_save(file, &GAME);
+    fclose(file);
+
+    file = fopen(save, "rb");
+    tbge_game_t* lg = game_load(file);
+    fclose(file);
+    free(save);
+
+    player_show(lg->player);
+    mission_show(lg->mission);
+    for(size_t i = 0; i < lg->map->count; i++){
+        node_show(lg->map->nodes[i]);
+    }
+    progress_show(lg->progress);
+
+}
+
 int main(int argc, char** argv)
 {
-    save_load_map();
-    
+    save_load_game();
+
     return 0;
 }

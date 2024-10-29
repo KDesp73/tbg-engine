@@ -105,6 +105,7 @@ examples: static ## Build all examples into binaries
 	cc examples/progress/progress.c -o $(EXAMPLES_BIN)/progress -l:libtbge.a -L. -Iinclude -ggdb
 	cc examples/mission/mission.c -o $(EXAMPLES_BIN)/mission -l:libtbge.a -L. -Iinclude -ggdb
 	cc examples/state/state.c -o $(EXAMPLES_BIN)/state -l:libtbge.a -L. -Iinclude -ggdb
+	cc examples/save/save.c -o $(EXAMPLES_BIN)/save -l:libtbge.a -L. -Iinclude -ggdb
 
 compile_commands.json: $(SRC_FILES) ## Generate compile_commands.json
 	@echo "[INFO] Generating compile_commands.json"

@@ -17,6 +17,7 @@ typedef struct {
 
 tbge_progress_t* progress_init(int first, ...);
 void progress_free(tbge_progress_t** progress);
+void progress_show(tbge_progress_t* progress);
 
 /**
  * Saves the checkpoint if its newer

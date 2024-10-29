@@ -6,6 +6,50 @@
 #include <stdlib.h>
 #include <string.h>
 
+char* get_filename(const char* path)
+{
+    if (path == NULL) {
+        return NULL; // Handle null input
+    }
+
+    const char* filename = strrchr(path, '/'); // Find the last occurrence of '/'
+    if (filename) {
+        return (char*)(filename + 1); // Return the substring after '/'
+    }
+    return (char*)path; // If no '/' is found, return the original path
+}
+
+char* date_time()
+{
+    char* date_time_str = malloc(20); // "YYYY-MM-DD_HH:MM:SS" + null terminator
+    if (!date_time_str) {
+        perror("Failed to allocate memory for date-time string");
+        return NULL;
+    }
+
+    time_t raw_time = time(NULL);
+    if (raw_time == -1) {
+        perror("Failed to get the current time");
+        free(date_time_str);
+        return NULL;
+    }
+
+    struct tm* time_info = localtime(&raw_time);
+    if (!time_info) {
+        perror("Failed to convert time to local time");
+        free(date_time_str);
+        return NULL;
+    }
+
+    if (strftime(date_time_str, 20, "%Y-%m-%d_%H:%M:%S", time_info) == 0) {
+        perror("Failed to format date-time string");
+        free(date_time_str);
+        return NULL;
+    }
+
+    return date_time_str;
+}
+
 int is_number(const char *str) 
 {
     if (*str == '\0') {

@@ -24,6 +24,8 @@
     } while(0)
 
 
+char* get_filename(const char* path);
+char* date_time();
 int is_number(const char *str);
 int starts_with(const char* str, const char* prefix);
 void print_visible(const char *str);

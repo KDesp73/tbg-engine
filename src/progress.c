@@ -1,8 +1,21 @@
 #include "progress.h"
+#include "ui.h"
 #include "utils.h"
 #include <stdlib.h>
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
+
+void progress_show(tbge_progress_t* progress)
+{
+    for(size_t i = 0; i < progress->count; i++){
+        if(progress->last_checkpoint > progress->checkpoints[i]){
+            printf("%s %d %s", ANSI_COMBINE(COLOR_BG(2), ANSI_BLACK), progress->checkpoints[i], ANSI_RESET);
+        } else {
+            printf("%s %d %s", ANSI_COMBINE(COLOR_BG(1), ANSI_BOLD), progress->checkpoints[i], ANSI_RESET);
+        }
+    }
+    printf("\n");
+}
 
 int progress_search(tbge_progress_t* progress, int checkpoint)
 {

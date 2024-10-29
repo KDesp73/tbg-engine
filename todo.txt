@@ -1,10 +1,7 @@
 TODO: achievements
-TODO: serialization
 TODO: map visualizer
-TODO: player
 TODO: documentation
 TODO: ui
-TODO: change checkpoint saving method
 TODO: map style status for all structs
 TODO: _log methods for all structs
 TODO: _show methods for all structs
@@ -14,3 +11,6 @@ DONE: game
 DONE: commands
 DONE: progress
 DONE: missions
+DONE: change checkpoint saving method
+DONE: player
+DONE: serialization

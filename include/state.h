@@ -1,12 +1,26 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "command.h"
 #include "game.h"
 #include "item.h"
 #include "map.h"
 #include "mission.h"
 #include "player.h"
+
+typedef struct {
+    int is_save_file;
+    char date[11];  // Format: YYYY-MM-DD
+    char time[9];   // Format: HH:MM:SS
+    size_t slot;
+} tbge_save_t;
+#define MAX_SAVES 100
+#define MAX_FILENAME_LENGTH 512
+
+tbge_save_t save_parse(const char* filename);
+char* save_name(size_t slot);
+void save_log(tbge_save_t save);
+char* save_latest(const char* saves[], size_t count, size_t slot);
+const char** save_search(const char* directories[], size_t dir_count, size_t* res_count);
 
 int game_save(FILE* file, tbge_game_t* game);
 tbge_game_t* game_load(FILE* file);
