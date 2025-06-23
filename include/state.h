@@ -23,7 +23,16 @@ char* save_latest(size_t slot);
 const char** save_search(const char* directories[], size_t dir_count, size_t* res_count);
 int save_loaded(tbge_game_t* game);
 
-#define SAVE_GAME(f, gp) \
+#define SAVE_GAME(slot, gp) \
+    do { \
+        char* __save = save_name(slot); \
+        FILE* __file = fopen(__save, "wb"); \
+        game_save(__file, gp); \
+        fclose(__file); \
+        free(__save); \
+    } while(0)
+
+#define SAVE_GAME_FILE(f, gp) \
     do { \
         FILE* __file = fopen(f, "wb"); \
         game_save(__file, gp); \

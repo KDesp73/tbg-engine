@@ -314,7 +314,7 @@ void save_load_game()
     GAME.progress->last_checkpoint = 5;
 
     char* save = save_name(1);
-    SAVE_GAME(save, &GAME);
+    SAVE_GAME_FILE(save, &GAME);
 
     FILE* file = fopen(save, "rb");
     tbge_game_t* lg = game_load(file);

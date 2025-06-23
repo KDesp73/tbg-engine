@@ -1,5 +1,7 @@
 #include "progress.h"
 #include "game.h"
+#include "state.h"
+#include <stdio.h>
 
 enum {
     CP_START,
@@ -25,7 +27,13 @@ int yes_or_no(const char* message)
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
+    LOAD_GAME(1);
+
+    if(save_loaded(&GAME))
+        printf("last checkpoint: %d\n", GAME.progress->last_checkpoint);
+
     GAME.progress = progress_init(
         CP_START,
         CP_MIDDLE,
@@ -35,18 +43,27 @@ int main(int argc, char** argv) {
 
     CHECKPOINT_GROUP(GAME.progress, CP_START){
         printf("START\n");
+        progress_show(GAME.progress);
 
-        if(yes_or_no("Exit?")) return 0;
+        if(yes_or_no("Exit?")) {
+            SAVE_GAME(1, &GAME);
+            return 0;
+        }
     }
 
     CHECKPOINT_GROUP(GAME.progress, CP_MIDDLE){
         printf("MIDDLE\n");
+        progress_show(GAME.progress);
 
-        if(yes_or_no("Exit?")) return 0;
+        if(yes_or_no("Exit?")) {
+            SAVE_GAME(1, &GAME);
+            return 0;
+        }
     }
 
     CHECKPOINT_GROUP(GAME.progress, CP_END){
         printf("END\n");
+        progress_show(GAME.progress);
     }
 
     return 0;

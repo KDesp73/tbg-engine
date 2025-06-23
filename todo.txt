@@ -2,6 +2,7 @@ TODO: achievements
 TODO: documentation
 TODO: ui
 TODO: map style status for all structs
+TODO: be able to load even if something is not stored
 DONE: items
 DONE: map
 DONE: game

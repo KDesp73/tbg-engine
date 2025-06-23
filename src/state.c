@@ -1,4 +1,5 @@
 #include "state.h"
+#include "mission.h"
 #define CLIB_IMPLEMENTATION
 #include "extern/clib.h"
 #include "game.h"
@@ -160,14 +161,12 @@ void save_log(tbge_save_t save)
 int player_save(FILE* file, tbge_player_t* player)
 {
     if (!file || !player) {
-        perror("Failed to open file or player is NULL");
         return -1;
     }
 
     // Save player stats and status
     if (fwrite(&player->status, sizeof(int), 1, file) != 1 ||
         fwrite(&player->stats, sizeof(tbge_stats_t), 1, file) != 1) {
-        perror("Failed to write player stats or status");
         return -1;
     }
 
@@ -175,18 +174,15 @@ int player_save(FILE* file, tbge_player_t* player)
     size_t name_len = strlen(player->name) + 1;
     if (fwrite(&name_len, sizeof(size_t), 1, file) != 1 ||
         fwrite(player->name, sizeof(char), name_len, file) != name_len) {
-        perror("Failed to write player name");
         return -1;
     }
 
     // Save inventory count and each item
     if (fwrite(&player->item_count, sizeof(size_t), 1, file) != 1) {
-        perror("Failed to write inventory count");
         return -1;
     }
     for (size_t i = 0; i < player->item_count; i++) {
         if (item_save(file, player->inventory[i]) != 0) {
-            perror("Failed to save inventory item");
             return -1;
         }
     }
@@ -297,7 +293,7 @@ tbge_node_t* node_load(FILE* file)
 int map_save(FILE* file, tbge_map_t* map)
 {
     if (!file || !map) {
-        perror("Invalid file or map");
+        if(!file) perror("Invalid file");
         return -1;
     }
 
@@ -479,8 +475,9 @@ tbge_items_t* items_load(FILE* file)
 // Save tbge_progress_t
 int progress_save(FILE* file, tbge_progress_t* progress)
 {
-    if (!file) {
-        perror("Failed to open file for saving progress");
+    if (!file || !progress) {
+        if (!file)
+            perror("Failed to open file for saving progress");
         return -1;
     }
 
@@ -527,7 +524,8 @@ tbge_progress_t* progress_load(FILE* file)
 int objective_save(FILE* file, tbge_objective_t* objective)
 {
     if (!file || !objective) {
-        perror("Invalid file or objective");
+        if(!file)
+            perror("Invalid file");
         return -1;
     }
 
@@ -583,7 +581,8 @@ tbge_objective_t* objective_load(FILE* file)
 int mission_save(FILE* file, tbge_mission_t* mission)
 {
     if (!file || !mission) {
-        perror("Invalid file or mission");
+        if(!file)
+            perror("Invalid file");
         return -1;
     }
 
@@ -669,10 +668,10 @@ tbge_mission_t* mission_load(FILE* file)
 int game_save(FILE* file, tbge_game_t* game)
 {
     // Save each component in the game struct
-    if (player_save(file, game->player) != 0) return -1;
     if (map_save(file, game->map) != 0) return -1;
-    if (progress_save(file, game->progress) != 0) return -1;
     if (mission_save(file, game->mission) != 0) return -1;
+    if (player_save(file, game->player) != 0) return -1;
+    if (progress_save(file, game->progress) != 0) return -1;
 
     return 1;
 }
@@ -683,17 +682,17 @@ tbge_game_t* game_load(FILE* file)
     tbge_game_t* game = malloc(sizeof(tbge_game_t));
     if (!game) return NULL;
 
-    game->player = player_load(file);
-    if (!game->player) goto load_error;
-
     game->map = map_load(file);
     if (!game->map) goto load_error;
 
-    game->progress = progress_load(file);
-    if (!game->progress) goto load_error;
-
     game->mission = mission_load(file);
     if (!game->mission) goto load_error;
+
+    game->player = player_load(file);
+    if (!game->player) goto load_error;
+
+    game->progress = progress_load(file);
+    if (!game->progress) goto load_error;
 
     return game;
 
@@ -702,23 +701,24 @@ load_error:
     if (game->player) player_free(&game->player);
     if (game->map) map_free(&game->map);
     if (game->progress) progress_free(&game->progress);
+    if (game->mission) mission_free(&game->mission);
     free(game);
     return NULL;
 }
 
 int game_load_stack(FILE* file, tbge_game_t* game)
 {
-    game->player = player_load(file);
-    if (!game->player) goto load_error;
-
     game->map = map_load(file);
     if (!game->map) goto load_error;
 
-    game->progress = progress_load(file);
-    if (!game->progress) goto load_error;
-
     game->mission = mission_load(file);
     if (!game->mission) goto load_error;
+
+    game->player = player_load(file);
+    if (!game->player) goto load_error;
+
+    game->progress = progress_load(file);
+    if (!game->progress) goto load_error;
 
     return 0;
 
@@ -727,5 +727,6 @@ load_error:
     if (game->player) player_free(&game->player);
     if (game->map) map_free(&game->map);
     if (game->progress) progress_free(&game->progress);
+    if (game->mission) mission_free(&game->mission);
     return -1;
 }

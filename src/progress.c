@@ -32,24 +32,8 @@ void progress_save_checkpoint(tbge_progress_t* progress, int checkpoint)
         return;
     }
 
-    if(!clib_file_exists(CHECKPOINT_FILE)){
-        clib_file_write(CHECKPOINT_FILE, "-1", "wb");
-    }
-
-    char* file_cp_s = clib_file_read(CHECKPOINT_FILE, "rb");
-
-    if(file_cp_s == NULL || !is_number(file_cp_s)){
-        progress->status = -1;
-        return;
-    }
-
-    int file_cp = atoi(file_cp_s);
-    free(file_cp_s);
-
-    if(file_cp <= checkpoint) {
-        char* its = clib_str_format("%d", checkpoint);
-        clib_file_write(CHECKPOINT_FILE, its, "wb");
-        free(its);
+    if(progress->last_checkpoint < checkpoint) {
+        progress->last_checkpoint = checkpoint;
         progress->status = 1;
         return;
     }
